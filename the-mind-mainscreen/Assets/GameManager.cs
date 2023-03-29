@@ -43,6 +43,9 @@ public class GameManager : MonoBehaviour
     public AudioClip errorSound;
     private AudioSource audioSource;
 
+    public int points;
+    public int ngames;
+
     public Player[] players;
     public Pile pile;
     private int topOfThePile;
@@ -75,7 +78,9 @@ public class GameManager : MonoBehaviour
         _thalamusConnector = null;
         GameState = GameState.Connection;
         audioSource = GetComponent<AudioSource>();
-        CONDITION = -1;
+        //CONDITION = -1;
+        points = 0;
+        ngames = 0;
     }
 
     // Update is called once per frame
@@ -130,6 +135,8 @@ public class GameManager : MonoBehaviour
                     GameFinishedTextUI.SetActive(true);
                     GameFinishedTextUI.GetComponent<Text>().text = "Game Completed!";
                     GameState = GameState.GameFinished;
+                    points += Level;
+                    ngames++;
                     _thalamusConnector.GameCompleted();
                 }
                 else
@@ -177,6 +184,8 @@ public class GameManager : MonoBehaviour
                     GameFinishedTextUI.GetComponent<Text>().text = "Game Over";
                     GameFinishedTextUI.SetActive(true);
                     GameState = GameState.GameFinished;
+                    points += Level;
+                    ngames++;
                     _thalamusConnector.GameOver(Level);
                 }
                 else
@@ -204,9 +213,9 @@ public class GameManager : MonoBehaviour
                         p.UseStarUpdate();
                     }
                     _thalamusConnector.AllAgreeStar();
-                    UnityEngine.Debug.Log(Stars);
+                    
                     Stars--;
-                    UnityEngine.Debug.Log(Stars);
+                    StarsUI.GetComponent<Text>().color = new Color(206, 17, 38);
                     UpdateStarsUI();
                     InvokeRepeating("ShrinkUntilDeactiveStarUI", 0, 0.006f);
                     GameState = GameState.Syncing;
@@ -276,7 +285,7 @@ public class GameManager : MonoBehaviour
             _thalamusConnector.Mistake(pile.LastPlayer, topOfThePile, wrongCards[0].ToArray(), wrongCards[1].ToArray(), wrongCards[2].ToArray());
             audioSource.PlayOneShot(errorSound);
             Lives--;
-            LivesUI.GetComponent<Text>().color = new Color(1, 0, 0);
+            LivesUI.GetComponent<Text>().color = new Color(206, 17, 38);
             UpdateLivesUI();
             OverlayMistakeUI.SetActive(true);
             GameState = GameState.Mistake;
@@ -316,7 +325,7 @@ public class GameManager : MonoBehaviour
                 _thalamusConnector.RefocusRequest(-1);
             }
         }
-        LivesUI.GetComponent<Text>().color = new Color(0, 0, 0);
+        LivesUI.GetComponent<Text>().color = new Color(238,238,238);
         UpdateLivesUI();
         OverlayMistakeUI.SetActive(false);
     }
@@ -325,7 +334,9 @@ public class GameManager : MonoBehaviour
     {
         StartNewLevel();
         topOfThePile = pile.GetTopCard();
-        LevelUI.GetComponent<Text>().color = new Color(0, 0, 0);
+        LevelUI.GetComponent<Text>().color = new Color(238, 238, 238);
+        StarsUI.GetComponent<Text>().color = new Color(229, 234, 255);
+        LivesUI.GetComponent<Text>().color = new Color(229, 234, 255);
         OverlayNextLevelUI.SetActive(false);
     }
 
@@ -351,15 +362,31 @@ public class GameManager : MonoBehaviour
             OverlayStarUI.transform.localScale = new Vector3(1.2f, 1.0f, 0.00f);
             CancelInvoke();
         }
+        StarsUI.GetComponent<Text>().color = new Color(229, 234, 255);
     }
 
+    public static List<T> Randomize<T>(List<T> list)
+    {
+        List<T> randomizedList = new List<T>();
+        //Random rnd = new Random();
+        while (list.Count > 0)
+        {
+            int index = Random.Range(0, list.Count); //pick a random item from the master list
+            randomizedList.Add(list[index]); //place it at the end of the randomized list
+            list.RemoveAt(index);
+        }
+        return randomizedList;
+    }
     List<List<int>> DealCards()
     {
+        UnityEngine.Debug.Log("poits: " + points);
+        UnityEngine.Debug.Log("ngames" + ngames);
         List<List<int>> hands = new List<List<int>>();
-        List<int> cards;
-        if (CONDITION == -1)
+        List<int> cards = new List<int>();
+
+        if (((points == 10 && ngames == 1) || (ngames > 2)) && ngames != 0)
         {
-            cards = new List<int>();
+            UnityEngine.Debug.Log("Random");
             while (cards.Count < NumPlayers * Level)
             {
                 int nextCard = Random.Range(1, 100);
@@ -371,9 +398,362 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            cards = new List<int>(cardsPerLevelPerCondition[CONDITION][Level - 1]);
-        }
+            UnityEngine.Debug.Log("Manipulado");
+            if (Level == 1)
+            {
+                cards.Add(Random.Range(1, 20));
+                cards.Add(Random.Range(50, 60));
+                cards.Add(Random.Range(90, 100));
+            }
 
+            if (Level == 2)
+            {
+                while (cards.Count < 5)
+                {
+                    int nextCard = Random.Range(50, 100);
+                    if (!cards.Contains(nextCard))
+                    {
+                        cards.Add(nextCard);
+                    }
+                }
+                bool b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(2, 3)] + 2;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Add(c);
+                        b = false;
+                    }
+                }
+            }
+
+            if (Level == 3)
+            {
+                while (cards.Count < 7)
+                {
+                    int nextCard = Random.Range(1, 100);
+                    if (!cards.Contains(nextCard))
+                    {
+                        cards.Add(nextCard);
+                    }
+                }
+                bool b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(0, 2)] + 3;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Insert(5, c);
+                        b = false;
+                    }
+                }
+                b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(0, 5)] + 1;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Add(c);
+                        b = false;
+                    }
+                }
+
+
+            }
+
+            if (Level == 4)
+            {
+                cards.Add(1);
+                int e = 0;
+                int f = 0;
+                int g = 0;
+
+                while (cards.Count < 11)
+                {
+                    if (e < 3)
+                    {
+                        int nextCard = Random.Range(1, 20);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            e++;
+                        }
+                    }
+                    if (f < 3)
+                    {
+                        int nextCard = Random.Range(50, 70);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            f++;
+                        }
+                    }
+                    if (g < 4)
+                    {
+                        int nextCard = Random.Range(75, 100);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            g++;
+                        }
+                    }
+                }
+
+                cards = Randomize(cards);
+
+                bool b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(8, 10)] + 2;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Add(c);
+                        b = false;
+                    }
+                }
+
+            }
+
+            if (Level == 5)
+            {
+                int f = 0;
+                int g = 0;
+
+                while (cards.Count < 13)
+                {
+                    if (f < 7)
+                    {
+                        int nextCard = Random.Range(1, 20);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            f++;
+                        }
+                    }
+                    if (g < 7)
+                    {
+                        int nextCard = Random.Range(70, 100);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            g++;
+                        }
+                    }
+                }
+
+                cards = Randomize(cards);
+
+                bool b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(5, 8)] + 2;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Insert(9, c);
+                        b = false;
+                    }
+                }
+                b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(0, 9)] + 5;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Add(c);
+                        b = false;
+                    }
+                }
+
+            }
+
+            if (Level == 6)
+            {
+                int f = 0;
+                int g = 0;
+
+                while (cards.Count < 18)
+                {
+                    if (f < 9)
+                    {
+                        int nextCard = Random.Range(1, 20);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            f++;
+                        }
+                    }
+                    if (g < 9)
+                    {
+                        int nextCard = Random.Range(70, 100);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            g++;
+                        }
+                    }
+                }
+
+                cards = Randomize(cards);
+            }
+
+            if (Level == 7)
+            {
+                int f = 0;
+                int g = 0;
+
+                while (cards.Count < 19)
+                {
+                    if (f < 3)
+                    {
+                        int nextCard = Random.Range(1, 10);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            f++;
+                        }
+                    }
+                    if (g < 16)
+                    {
+                        int nextCard = Random.Range(40, 100);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            g++;
+                        }
+                    }
+                }
+
+                cards = Randomize(cards);
+
+                bool b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(0, 5)] + 2;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Insert(6, c);
+                        b = false;
+                    }
+                }
+
+                b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(7, 13)] + 1;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Add(c);
+                        b = false;
+                    }
+                }
+
+            }
+
+            if (Level == 8)
+            {
+                int e = 0;
+                int f = 0;
+                int g = 0;
+
+                while (cards.Count < 24)
+                {
+                    if (e < 8)
+                    {
+                        int nextCard = Random.Range(1, 20);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            e++;
+                        }
+                    }
+                    if (f < 8)
+                    {
+                        int nextCard = Random.Range(25, 40);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            f++;
+                        }
+                    }
+                    if (g < 8)
+                    {
+                        int nextCard = Random.Range(50, 100);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            g++;
+                        }
+                    }
+                }
+
+                cards = Randomize(cards);
+            }
+
+            if (Level == 9)
+            {
+                int f = 0;
+                int g = 0;
+
+                while (cards.Count < 25)
+                {
+                    if (f < 9)
+                    {
+                        int nextCard = Random.Range(1, 25);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            f++;
+                        }
+                    }
+                    if (g < 16)
+                    {
+                        int nextCard = Random.Range(50, 100);
+                        if (!cards.Contains(nextCard))
+                        {
+                            cards.Add(nextCard);
+                            g++;
+                        }
+                    }
+                }
+
+                cards = Randomize(cards);
+
+                bool b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(9, 16)] + 3;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Insert(17, c);
+                        b = false;
+                    }
+                }
+
+                b = true;
+                while (b)
+                {
+                    int c = cards[Random.Range(0, 8)] + 1;
+                    if (!cards.Contains(c))
+                    {
+                        cards.Add(c);
+                        b = false;
+                    }
+                }
+            }
+
+            if (Level == 10)
+            {
+                while (cards.Count < NumPlayers * Level)
+                {
+                    int nextCard = Random.Range(1, 100);
+                    if (!cards.Contains(nextCard))
+                    {
+                        cards.Add(nextCard);
+                    }
+                }
+            }
+        }
 
         for (int i = 0; i < NumPlayers; i++)
         {
@@ -389,18 +769,18 @@ public class GameManager : MonoBehaviour
         {
             Stars++;
             StarsUI.GetComponent<Text>().text = "Stars: " + Stars;
-            StarsUI.GetComponent<Text>().color = new Color(1, 1, 1);
+            StarsUI.GetComponent<Text>().color = new Color(122, 184, 0);
         }
         if (Level == 3 || Level == 6 || Level == 9)
         {
             Lives++;
             LivesUI.GetComponent<Text>().text = "Lives: " + Lives;
-            LivesUI.GetComponent<Text>().color = new Color(1, 1, 1);
+            LivesUI.GetComponent<Text>().color = new Color(122, 184, 0);
 
         }
         Level++;
         LevelUI.GetComponent<Text>().text = "Level: " + Level;
-        LevelUI.GetComponent<Text>().color = new Color(1, 1, 1);
+        LevelUI.GetComponent<Text>().color = new Color(122, 184, 0);
 
     }
 

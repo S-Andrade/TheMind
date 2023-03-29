@@ -11,6 +11,7 @@ public class Player : MonoBehaviour
     public GameObject NoUI;
     public GameObject WrongCardsUI;
     public GameObject ConnectionUI;
+    public GameObject StarCardsUI;
     public Pile pile;
     public int ID;
     public string KeyToPlayer;
@@ -62,6 +63,7 @@ public class Player : MonoBehaviour
         UpdateStarUI();
         UpdateCardsUI();
         UpdateWrongCardsUI();
+        updateStarCardsUI();
     }
 
     public void ConnectionReceived(string name)
@@ -185,11 +187,37 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void UpdateCardsUI()
-    {
-        if (GameManager.DebugMode)
+    public void updateStarCardsUI()
+    {   
+        if (showCards.Count > 0)
         {
             string text = "[";
+            for (int i = 0; i < showCards.Count; i++)
+            {
+                text += showCards[i];
+                if (i != showCards.Count - 1)
+                {
+                    text += ",";
+                }
+            }
+            text += "]";
+            StarCardsUI.SetActive(true);
+            StarCardsUI.GetComponent<Text>().text = text;
+        }
+        else
+        {
+            StarCardsUI.SetActive(false);
+        }
+        
+        
+    }
+    public void UpdateCardsUI()
+    {
+        string text = "";
+
+        if (GameManager.DebugMode)
+        {
+            text += "[";
             for (int i = 0; i < cards.Count; i++)
             {
                 text += cards[i];
@@ -199,41 +227,14 @@ public class Player : MonoBehaviour
                 }
             }
             text += "]";
-            if (showCards.Count > 0)
-            {
-                text += "[";
-                for (int i = 0; i < showCards.Count; i++)
-                {
-                    text += showCards[i];
-                    if (i != showCards.Count - 1)
-                    {
-                        text += ",";
-                    }
-                }
-                text += "]";
-            }
-            CardsUI.GetComponent<Text>().text = text;
+           
         }
         else
-        {
-            string text = "";
-            if (showCards.Count > 0)
-            {
-                text += "[";
-                for (int i = 0; i < showCards.Count; i++)
-                {
-                    text += showCards[i];
-                    if (i != showCards.Count - 1)
-                    {
-                        text += ",";
-                    }
-                }
-                text += "]";
-            }
-            text += "" + cards.Count + " cards left";
-            
-            CardsUI.GetComponent<Text>().text = text;
+        {         
+            text += cards.Count + " cards left";
+ 
         }
+        CardsUI.GetComponent<Text>().text = text;
     }
 
     private void UpdateConnectionUI()

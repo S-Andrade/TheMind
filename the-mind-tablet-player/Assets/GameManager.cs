@@ -85,14 +85,22 @@ public class GameManager : MonoBehaviour
         if (GameState == GameState.UseStar)
         {
             YesStarButtonUI.GetComponent<Button>().interactable = true;
-            YesStarButtonUI.GetComponentInChildren<Text>().text = "Yes";
+            YesStarButtonUI.GetComponent<Image>().enabled = true;
+            //YesStarButtonUI.GetComponentInChildren<Text>().text = "Yes";
+
             NoStarButtonUI.GetComponent<Button>().interactable = true;
-            NoStarButtonUI.GetComponentInChildren<Text>().text = "No";
+            NoStarButtonUI.GetComponent<Image>().enabled = true;
+            //NoStarButtonUI.GetComponentInChildren<Text>().text = "No";
+        
         }
         else
         {
             YesStarButtonUI.GetComponent<Button>().interactable = false;
+            YesStarButtonUI.GetComponent<Image>().enabled = false;
+
             NoStarButtonUI.GetComponent<Button>().interactable = false;
+            NoStarButtonUI.GetComponent<Image>().enabled = false;
+         
         }
     }
    

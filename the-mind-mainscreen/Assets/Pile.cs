@@ -5,14 +5,17 @@ using UnityEngine.UI;
 
 public class Pile : MonoBehaviour
 {
+ 
     public GameObject PileUI;
     private List<int> pile;
     public int LastPlayer;
 
+    
+
     // Start is called before the first frame update
     void Start()
     {
-
+        
     }
 
     // Update is called once per frame
@@ -48,6 +51,7 @@ public class Pile : MonoBehaviour
 
     public void UpdatePileUI()
     {
+
         if (GameManager.GameState == GameState.Game || GameManager.GameState == GameState.Mistake || GameManager.GameState == GameState.Syncing)
         {
             PileUI.SetActive(true);
