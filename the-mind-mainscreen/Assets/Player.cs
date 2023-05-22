@@ -188,7 +188,7 @@ public class Player : MonoBehaviour
     }
 
     public void updateStarCardsUI()
-    {   
+    {
         if (showCards.Count > 0)
         {
             string text = "[";
@@ -208,8 +208,8 @@ public class Player : MonoBehaviour
         {
             StarCardsUI.SetActive(false);
         }
-        
-        
+
+
     }
     public void UpdateCardsUI()
     {
@@ -227,12 +227,12 @@ public class Player : MonoBehaviour
                 }
             }
             text += "]";
-           
+
         }
         else
-        {         
+        {
             text += cards.Count + " cards left";
- 
+
         }
         CardsUI.GetComponent<Text>().text = text;
     }
@@ -285,7 +285,7 @@ public class Player : MonoBehaviour
             YesUI.SetActive(false);
             NoUI.SetActive(true);
         }
-        else 
+        else
         {
             YesUI.SetActive(false);
             NoUI.SetActive(false);
@@ -310,7 +310,8 @@ public class Player : MonoBehaviour
 
     public void StarSignal(int playerID)
     {
-        if (GameManager.GameState == GameState.Game){
+        if (GameManager.GameState == GameState.Game)
+        {
             HasSignaledStar = true;
             Debug.Log("Star");
             Debug.Log(playerID);
@@ -319,11 +320,13 @@ public class Player : MonoBehaviour
         {
             Debug.Log("----- Received a star signal and the GameState is not GAME!!!");
         }
-            
+
     }
 
-    public void NoStarSignal(int playerID){
-        if (GameManager.GameState == GameState.UseStar){
+    public void NoStarSignal(int playerID)
+    {
+        if (GameManager.GameState == GameState.UseStar)
+        {
             AgreeStar = "NO";
             Debug.Log(AgreeStar);
             Debug.Log(playerID);
@@ -334,8 +337,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void YesStarSignal(int playerID){
-        if (GameManager.GameState == GameState.UseStar){
+    public void YesStarSignal(int playerID)
+    {
+        if (GameManager.GameState == GameState.UseStar)
+        {
             AgreeStar = "YES";
             Debug.Log(AgreeStar);
             Debug.Log(playerID);
@@ -353,5 +358,5 @@ public class Player : MonoBehaviour
         showCards.Add(card);
     }
 
-    
+
 }

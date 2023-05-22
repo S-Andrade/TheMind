@@ -15,7 +15,8 @@ public enum GameState
     NextLevel,
     GameFinished,
     UseStar,
-    WaitingAnswer
+    WaitingAnswer,
+    Wait
 }
 
 
@@ -51,6 +52,7 @@ public class GameManager : MonoBehaviour
     private TabletThalamusConnector _thalamusConnector;
 
     public static GameState GameState;
+    public static GameState PreviuosGameState;
     public int Stars;
 
     // Start is called before the first frame update
@@ -63,6 +65,8 @@ public class GameManager : MonoBehaviour
         HasSignalledUseStar = false;
         AgreeStar = null;
         ConfigsScreen.SetActive(true);
+        PortInputField.GetComponent<InputField>().text = "7030";
+        PlayerIDInputField.GetComponent<InputField>().text = "0";
     }
 
     // Update is called once per frame
@@ -78,6 +82,11 @@ public class GameManager : MonoBehaviour
             UpdateReadyButtonUI();
             UpdateStarButtonUI();
             UpdateAnswerStarButtonUI();
+            //UnityEngine.Debug.Log(GameState);
+        }
+        if (GameState == GameState.GameFinished)
+        {
+            Application.Quit();
         }
     }
     void UpdateAnswerStarButtonUI()
@@ -151,7 +160,7 @@ public class GameManager : MonoBehaviour
 
     void UpdateRefocusButtonUI()
     {
-        if (GameState == GameState.NextLevel || GameState == GameState.Mistake || GameState == GameState.UseStar)
+        if (GameState == GameState.NextLevel || GameState == GameState.Mistake || GameState == GameState.UseStar || GameState == GameState.WaitingAnswer || GameState == GameState.Wait)
         {
             RefocusButtonUI.GetComponent<Button>().interactable = false;
         }
@@ -167,7 +176,7 @@ public class GameManager : MonoBehaviour
 
     void UpdateCardsUI()
     {
-        if (GameState == GameState.Syncing || GameState == GameState.Game || GameState == GameState.Mistake)
+        if (GameState == GameState.Syncing || GameState == GameState.Game || GameState == GameState.Mistake || GameState == GameState.Wait)
         {
             string text = "[";
             for (int i = 0; i < cards.Count; i++)
@@ -212,6 +221,7 @@ public class GameManager : MonoBehaviour
     public void GameFinished()
     {
         GameState = GameState.GameFinished;
+        //Application.Quit();
     }
 
     public void NewLevelHasStarted(int stars, int[] p0Hand, int[] p1Hand, int[] p2Hand)
@@ -367,6 +377,16 @@ public class GameManager : MonoBehaviour
         UnityEngine.Debug.Log(AgreeStar);
     }
 
-
+    public void StartWait()
+    {
+        PreviuosGameState = GameState;
+        GameState = GameState.Wait;
+        UnityEngine.Debug.Log("startWait");
+    }
+    public void EndWait()
+    {
+        GameState = PreviuosGameState;
+        UnityEngine.Debug.Log("EndWait");
+    }
 
 }

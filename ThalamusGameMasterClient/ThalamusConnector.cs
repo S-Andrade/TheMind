@@ -76,6 +76,15 @@ public class ThalamusConnector : ThalamusClient, ITabletsGM
         {
             _publisher.NotAllAgreeStar();
         }
+        public void StartWait()
+        {
+            _publisher.StartWait();
+        }
+        public void EndWait()
+        {
+            _publisher.EndWait();
+        }
+
     }
     
     public ThalamusConnector(string clientName, string character)

@@ -74,6 +74,15 @@ public class UnityListener : XmlRpcListenerService, IUnityThalamusSubscriber
     {
         _thalamusCS.TypifiedPublisher.NotAllAgreeStar();
     }
+    public void StartWait()
+    {
+        _thalamusCS.TypifiedPublisher.StartWait();
+    }
+    public void EndWait()
+    {
+        _thalamusCS.TypifiedPublisher.EndWait();
+    }
+
 }
 
 public class UnityConnector

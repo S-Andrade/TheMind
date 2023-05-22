@@ -35,6 +35,10 @@ public interface IUnityThalamusSubscriber : IGMTablets
     new void AllAgreeStar();
     [XmlRpcMethod]
     new void NotAllAgreeStar();
+    [XmlRpcMethod]
+    new void StartWait();
+    [XmlRpcMethod]
+    new void EndWait();
 }
 
 public interface IUnityThalamusPublisher : ITabletsGM, IXmlRpcProxy
@@ -55,4 +59,5 @@ public interface IUnityThalamusPublisher : ITabletsGM, IXmlRpcProxy
     new void NoStarSignal(int playerID);
     [XmlRpcMethod]
     new void YesStarSignal(int playerID);
+    
 }

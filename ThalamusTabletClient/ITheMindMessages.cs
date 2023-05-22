@@ -55,4 +55,9 @@ public interface IUnityTabletPublisher : IGMTablets, IXmlRpcProxy
     new void AllAgreeStar();
     [XmlRpcMethod]
     new void NotAllAgreeStar();
+    [XmlRpcMethod]
+    new void StartWait();
+    [XmlRpcMethod]
+    new void EndWait();
+
 }

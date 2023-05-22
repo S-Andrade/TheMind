@@ -61,6 +61,7 @@ public class ThalamusConnector : ThalamusClient, IGMTablets
         {
             _publisher.YesStarSignal(playerID);
         }
+       
 
     }
 
@@ -147,6 +148,12 @@ public class ThalamusConnector : ThalamusClient, IGMTablets
     {
         UnityConnector.RPCProxy.NotAllAgreeStar();
     }
-
-
+    public void StartWait()
+    {
+        UnityConnector.RPCProxy.StartWait();
+    }
+    public void EndWait()
+    {
+        UnityConnector.RPCProxy.EndWait();
+    }
 }

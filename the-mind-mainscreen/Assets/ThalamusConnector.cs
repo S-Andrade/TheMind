@@ -36,6 +36,10 @@ public interface IUnityPublisher : IGMTablets
 
     [XmlRpcMethod]
     new void StarRequest(int playerID);
+    [XmlRpcMethod]
+    new void StartWait();
+    [XmlRpcMethod]
+    new void EndWait();
 }
 
 public interface IUnitySubscriber : ITabletsGM
@@ -376,5 +380,13 @@ public class GameMasterThalamusConnector : ThalamusConnector, IUnityPublisher
     public void StarRequest(int playerID)
     {
         _rpcProxy.StarRequest(playerID);
+    }
+    public void StartWait()
+    {
+        _rpcProxy.StartWait();
+    }
+    public void EndWait()
+    {
+        _rpcProxy.EndWait();
     }
 }

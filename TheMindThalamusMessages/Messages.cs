@@ -16,6 +16,8 @@ namespace TheMindThalamusMessages
         void StarRequest(int playerID);
         void AllAgreeStar();
         void NotAllAgreeStar();
+        void StartWait();
+        void EndWait();
     }
 
 
@@ -29,5 +31,6 @@ namespace TheMindThalamusMessages
         void StarSignal(int playerID);
         void NoStarSignal(int playerID);
         void YesStarSignal(int playerID);
+        
     }
 }

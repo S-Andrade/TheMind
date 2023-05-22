@@ -36,6 +36,9 @@ namespace RoboticPlayer
                     if (command == "c")
                     {
                         theMindPlayer.ConnectToGM();
+
+                        Thread mainLoopThread = new Thread(theMindPlayer.MainLoop);
+                        mainLoopThread.Start();
                     }
                     command = Console.ReadLine();
                     //Thread.Sleep(30000);

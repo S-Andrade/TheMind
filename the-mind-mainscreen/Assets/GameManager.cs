@@ -141,12 +141,14 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
+                    //_thalamusConnector.StartWait();
+                    //_thalamusConnector.EndWait();
                     LevelUp();
                     OverlayNextLevelUI.SetActive(true);
                     GameState = GameState.NextLevel;
                 }
             }
-            
+
             if (players[0].HasSignaledRefocus || players[1].HasSignaledRefocus || players[2].HasSignaledRefocus)
             {
                 GameState = GameState.Syncing;
@@ -198,7 +200,7 @@ public class GameManager : MonoBehaviour
                 }
             }
         }
-       
+
         if (GameState == GameState.UseStar)
         {
             OverlayStarUI.SetActive(true);
@@ -213,7 +215,7 @@ public class GameManager : MonoBehaviour
                         p.UseStarUpdate();
                     }
                     _thalamusConnector.AllAgreeStar();
-                    
+
                     Stars--;
                     StarsUI.GetComponent<Text>().color = new Color(206, 17, 38);
                     UpdateStarsUI();
@@ -233,14 +235,14 @@ public class GameManager : MonoBehaviour
                     GameState = GameState.Syncing;
                 }
             }
-            
-           
-            
+
+
+
         }
 
     }
 
-  
+
 
     void UpdateNumLevelsSetupUI()
     {
@@ -269,7 +271,7 @@ public class GameManager : MonoBehaviour
         foreach (Player p in players)
         {
             List<int> playerWrongCards = p.GetWrongCards(topOfThePile);
-            
+
             mistake = playerWrongCards.Count > 0 || mistake;
 
             if (playerWrongCards.Count == 0)
@@ -325,7 +327,7 @@ public class GameManager : MonoBehaviour
                 _thalamusConnector.RefocusRequest(-1);
             }
         }
-        LivesUI.GetComponent<Text>().color = new Color(238,238,238);
+        LivesUI.GetComponent<Text>().color = new Color(238, 238, 238);
         UpdateLivesUI();
         OverlayMistakeUI.SetActive(false);
     }
