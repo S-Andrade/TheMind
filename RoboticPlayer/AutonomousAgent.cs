@@ -9,6 +9,7 @@ using Thalamus;
 using TheMindThalamusMessages;
 using GazeOFMessages;
 using EmoteCommonMessages;
+using Thalamus.BML;
 
 namespace RoboticPlayer
 {
@@ -23,7 +24,8 @@ namespace RoboticPlayer
         NoMoreCards,
         Waiting,
         StopMainLoop,
-        Wait
+        Wait,
+        UseStar
     }
 
     public interface IGazeBehaviours : IPerception
@@ -33,7 +35,7 @@ namespace RoboticPlayer
 
     }
 
-    public interface IAutonomousAgentPublisher : IThalamusPublisher, ITabletsGM, IGazeStateActions, IGazeBehaviours { }
+    public interface IAutonomousAgentPublisher : IThalamusPublisher, ITabletsGM, IGazeStateActions, IGazeBehaviours, IAnimationActions, ISpeakActions, IPostureActions { }
 
     class AutonomousAgent : ThalamusClient, IGMTablets, IGazeOpenFacePerceptions
     {
@@ -111,13 +113,53 @@ namespace RoboticPlayer
             {
                 publisher.GazeBehaviourFinished(gazer, target, timestamp);
             }
+
+            
+            public void PlayAnimation(string playerID, string animation)
+            {
+                publisher.PlayAnimation(playerID, animation);
+            }
+
+            public void PlayAnimationQueued(string playerID, string animation)
+            {
+                publisher.PlayAnimationQueued(playerID, animation);
+            }
+
+            public void StopAnimation(string playerID)
+            {
+                publisher.StopAnimation(playerID);
+            }
+
+            public void Speak(string playerID, string text)
+            {
+                publisher.Speak(playerID, text);
+            }
+
+            public void SpeakBookmarks(string playerID, string[] text, string[] bookmarks)
+            {
+                publisher.SpeakBookmarks(playerID, text, bookmarks);
+            }
+            public void SpeakStop()
+            {
+                publisher.SpeakStop();
+            }
+
+            public void SetPosture(string playerID, string posture, double percent, double decay)
+            {
+                publisher.SetPosture(playerID, posture, percent, decay);
+            }
+            public void ResetPose()
+            {
+                publisher.ResetPose();
+            }
+
         }
 
         public TheMindPublisher TMPublisher;
-        protected ReactiveGazeController gazeController;
+        public GazeController gazeController;
         protected int ID;
-        protected GameState _gameState;
-        protected GameState PreviuosGameState;
+        public GameState _gameState;
+        protected GameState _previousGameState;
         protected List<GameState> eventsList;
         protected static Mutex mut = new Mutex();
         protected Random randomNums;
@@ -131,6 +173,13 @@ namespace RoboticPlayer
         public Stopwatch SessionStartStopWatch;
         protected int nextTimeToPlay;
         private string GazeType;
+        public bool lookattablet;
+        public int lookatplayer;
+        public bool lookatfront;
+        public int LEVEL;
+        private static Thread tabletThread;
+        private static Thread playerThread;
+        private static Thread lookatfrontThread;
 
         public AutonomousAgent(string clientName, string character, int playerID, string gazeType)
             : base(clientName, character)
@@ -139,26 +188,26 @@ namespace RoboticPlayer
             SetPublisher<IAutonomousAgentPublisher>();
             TMPublisher = new TheMindPublisher(base.Publisher);
             GazeType = gazeType;
+            
             if (gazeType == "r")
             {
                 gazeController = new RandomGazeController(this);
-                gazeController.JOINT_ATTENTION = false;
+                //gazeController.JOINT_ATTENTION = false;
             }
             else if (gazeType == "m")
             {
                 gazeController = new ReactiveGazeController(this);
-                gazeController.JOINT_ATTENTION = false;
-            }
-            else if (gazeType == "mj")
-            {
-                gazeController = new ReactiveGazeController(this);
-                gazeController.JOINT_ATTENTION = true;
+                //gazeController.JOINT_ATTENTION = false;
             }
             else if (gazeType == "p")
             {
                 gazeController = new ProactiveGazeController(this);
-                gazeController.JOINT_ATTENTION = true;
+                //gazeController.JOINT_ATTENTION = true;
             }
+
+            Thread gazeThread = new Thread(gazeController.Update);
+            gazeThread.Start();
+
             ID = playerID;
             TopOfThePile = 0;
             Pace = 1000;
@@ -170,10 +219,12 @@ namespace RoboticPlayer
             SessionStartStopWatch = new Stopwatch();
             SessionStartStopWatch.Start();
             nextTimeToPlay = -1;
+            lookattablet = false;
+            lookatplayer = -1;
+
             //Thread mainLoopThread = new Thread(MainLoop);
             //mainLoopThread.Start();
         }
-
         public void MainLoop()
         {
             while(_gameState != GameState.StopMainLoop)
@@ -188,15 +239,47 @@ namespace RoboticPlayer
                     Console.WriteLine(_gameState);
                 }
                 mut.ReleaseMutex();*/
+                
                 if (_gameState == GameState.Wait)
                 {
                     //do nothing
                 }
-
-                if (_gameState == GameState.NextLevel)
+                if (_gameState == GameState.UseStar)
                 {
+                    List<string> texto = new List<string> { "Uma estrela!", "Boa ideia!", "ok!" };
+                    Random random = new Random();
+                    int randomIndex = random.Next(texto.Count);
+                    TMPublisher.SetPosture("player2", "neural", 0, 0);
+                    TMPublisher.Speak("player2", texto[randomIndex]);
+
                     int randomWait = randomNums.Next(2000, 5000);
                     Thread.Sleep(randomWait);
+                    lookattablet = true;
+                    LookAtTablet();
+                    TMPublisher.YesStarSignal(ID);
+                    PlayStopWatch.Start();
+                    _gameState = GameState.Waiting;
+                }
+                if (_gameState == GameState.NextLevel)
+                {
+                    Console.WriteLine(LEVEL);
+                    if (LEVEL >= 1)
+                    {
+                        lookatfront = true;
+                        LookAtFront(3000);
+                        List<string> texto = new List<string> { "Boa, passamos um nivel!", "Mais um nivel!" };
+                        Random random = new Random();
+                        int randomIndex = random.Next(texto.Count);
+                        TMPublisher.PlayAnimation("player2", "joy1");
+                        TMPublisher.Speak("player2", texto[randomIndex]);
+                        lookatfront = true;
+                        LookAtFront(3000);
+
+                    }
+                    int randomWait = randomNums.Next(2000, 5000);
+                    Thread.Sleep(randomWait);
+                    lookattablet = true;
+                    LookAtTablet();
                     TMPublisher.ReadyForNextLevel(ID);
                     _gameState = GameState.Waiting;
                 }
@@ -204,56 +287,108 @@ namespace RoboticPlayer
                 {
                     int randomWait = randomNums.Next(2000, 5000);
                     Thread.Sleep(randomWait);
+                    lookattablet = true;
+                    LookAtTablet();
                     TMPublisher.RefocusSignal(ID);
                     _gameState = GameState.Waiting;
                 }
                 if (_gameState == GameState.Mistake)
                 {
+                    List<string> triste = new List<string> { "oooooh não!", "Perdemos uma vida!", "ohhhhhh, menos uma!" };
+                    Random random = new Random();
+                    int randomIndex = random.Next(triste.Count);
+                    TMPublisher.SetPosture("player2", "disappointment", 0, 0);
+                    TMPublisher.Speak("player2", triste[randomIndex]);
+                    
                     int randomWait = randomNums.Next(2000, 5000);
                     Thread.Sleep(randomWait);
+                    lookattablet = true;
+                    LookAtTablet();
                     TMPublisher.ContinueAfterMistake(ID);
                     nextTimeToPlay = -1;
                     _gameState = GameState.Waiting;
                 }
                 if (_gameState == GameState.Game)
-                {
-                    mut.WaitOne();
-                    if (nextTimeToPlay == -1)
                     {
-                        if (cards.Count > 0)
+                        mut.WaitOne();
+                        if (nextTimeToPlay == -1)
                         {
-                            if (ID == 2 && cardsLeft[0] == 0 && cardsLeft[1] == 0)
+                            if (cards.Count > 0)
                             {
-                                PlayStopWatch.Restart();
-                                nextTimeToPlay = 1500;
+                                if (ID == 2 && cardsLeft[0] == 0 && cardsLeft[1] == 0)
+                                {
+                                    PlayStopWatch.Restart();
+                                    nextTimeToPlay = 1500;
+                                }
+                                else
+                                {
+                                    PlayStopWatch.Restart();
+                                    nextTimeToPlay = EstimateTimeToPlay();
+                                    //Console.WriteLine(">>>>> NextTimeToPlay in " + (lowestCard - TopOfThePile) + "s : " + lowestCard + " - " + TopOfThePile + " / " + cardsLeft[0] + " / " + cardsLeft[1] + " / " + cardsLeft[2]);
+                                    Console.WriteLine(">>>>> NextTimeToPlay in " + nextTimeToPlay);
+                                }
                             }
                             else
                             {
-                                PlayStopWatch.Restart();
-                                nextTimeToPlay = EstimateTimeToPlay();
-                                //Console.WriteLine(">>>>> NextTimeToPlay in " + (lowestCard - TopOfThePile) + "s : " + lowestCard + " - " + TopOfThePile + " / " + cardsLeft[0] + " / " + cardsLeft[1] + " / " + cardsLeft[2]);
-                                Console.WriteLine(">>>>> NextTimeToPlay in " + nextTimeToPlay);
+                                //_gameState = GameState.Waiting;
+                                //Console.WriteLine("---- No more cards!!!!!");
                             }
                         }
-                        else
+                        else if (PlayStopWatch.IsRunning && PlayStopWatch.ElapsedMilliseconds >= nextTimeToPlay)
                         {
-                            //_gameState = GameState.Waiting;
-                            Console.WriteLine("---- No more cards!!!!!");
+                            PlayStopWatch.Stop();
+                            lookattablet = true;
+                            LookAtTablet();
+                            TMPublisher.PlayCard(ID, cards[0]);
+                            cards.RemoveAt(0);
+                            nextTimeToPlay = -1;
                         }
+                        mut.ReleaseMutex();
                     }
-                    else if (PlayStopWatch.IsRunning && PlayStopWatch.ElapsedMilliseconds >= nextTimeToPlay)
-                    {
-                        PlayStopWatch.Stop();
-                        TMPublisher.PlayCard(ID, cards[0]);
-                        cards.RemoveAt(0);
-                        nextTimeToPlay = -1;
-                    }
-                    mut.ReleaseMutex();
-                }
+                
                 //Thread.Sleep(2000);
             }
         }
 
+        public void LookAtTablet()
+        {
+            tabletThread = new Thread(() => 
+            {
+                Thread.Sleep(5000);
+            });
+            tabletThread.Start();
+            tabletThread.Join();
+            lookattablet = false;
+           
+            
+        }
+
+        public void LookAtPlayer()
+        {
+            playerThread = new Thread(() =>
+            {
+                Thread.Sleep(2000);
+            });
+
+            playerThread.Start();
+            playerThread.Join();
+            lookatplayer = -1;
+
+        }
+
+        public void LookAtFront(int time)
+        {
+            lookatfrontThread = new Thread(() =>
+            {
+                Thread.Sleep(time);
+            });
+
+            lookatfrontThread.Start();
+            lookatfrontThread.Join();
+            lookatfront = false;
+            
+
+        }
         public virtual int EstimateTimeToPlay()
         {
             return (cards[0] - TopOfThePile) * 1000;
@@ -288,6 +423,17 @@ namespace RoboticPlayer
 
         public void StartLevel(int level, int stars ,int teamLives, int[] p0Hand, int[] p1Hand, int[] p2Hand)
         {
+            LEVEL = level;
+            
+            if (LEVEL == 1)
+            {
+                lookatfront = true;
+                LookAtFront(3000);
+                TMPublisher.Speak("player2", "Olá eu sou o EMYS e vou ser o vosso terceiro membro de equipa!");
+                lookatfront = true;
+                LookAtFront(10000);
+            }
+
             TopOfThePile = 0;
             Pace = 1000;
             cards = new List<int>();
@@ -349,27 +495,6 @@ namespace RoboticPlayer
 
         public void RefocusRequest(int playerID)
         {
-            /*if (playerID == -1)
-            {
-                mut.WaitOne();
-                eventsList.Add(GameState.Game);
-                _gameState = GameState.Game;
-                mut.ReleaseMutex();
-            }
-            else if (cards.Count > 0)
-            {
-                mut.WaitOne();
-                eventsList.Add(GameState.Syncing);
-                _gameState = GameState.Syncing;
-                mut.ReleaseMutex();
-            }
-            else
-            {
-                mut.WaitOne();
-                eventsList.Add(GameState.Waiting);
-                _gameState = GameState.Waiting;
-                mut.ReleaseMutex();
-            }*/
             if (playerID == -1)
             {
                 mut.WaitOne();
@@ -377,18 +502,28 @@ namespace RoboticPlayer
                 _gameState = GameState.Game;
                 mut.ReleaseMutex();
             }
-            else
+            else if (cards.Count > 0)
             {
                 mut.WaitOne();
                 //eventsList.Add(GameState.Syncing);
                 _gameState = GameState.Syncing;
                 mut.ReleaseMutex();
             }
+            else
+            {
+                mut.WaitOne();
+                //eventsList.Add(GameState.Waiting);
+                _gameState = GameState.Waiting;
+                mut.ReleaseMutex();
+            }
+            
         }
 
         public void CardPlayed(int playerID, int card)
         {
             mut.WaitOne();
+            lookatplayer = playerID;
+            LookAtPlayer();
             long timeDelta = lastCardStopWatch.ElapsedMilliseconds;
             int cardsDelta = card - TopOfThePile;
             Pace = timeDelta / cardsDelta;
@@ -472,37 +607,63 @@ namespace RoboticPlayer
                 _gameState = GameState.Mistake;
             }
         }
-
         public void GameOver(int level)
         {
+            
+            TMPublisher.PlayAnimation("player2", "sadness5");
+            TMPublisher.Speak("player2", "Ooooh, Perdemos o jogo!");
             //throw new NotImplementedException();
         }
-
         public void GameCompleted()
         {
+            TMPublisher.PlayAnimation("player2", "joy5");
+            TMPublisher.Speak("player2", "Ganhamos o jogo!");
             //throw new NotImplementedException();
         }
         public void StarRequest(int playerID)
         {
-            
+            mut.WaitOne();
+            _gameState = GameState.UseStar;
+            PlayStopWatch.Stop();
+            mut.ReleaseMutex();
         }
         public void AllAgreeStar()
         {
-
+            mut.WaitOne();
+            cards.RemoveAt(0);
+            for (var i = 0; i < cardsLeft.Count; i++)
+            {
+                cardsLeft[0]--;
+            }
+            _gameState = GameState.Syncing;
+            mut.ReleaseMutex();
         }
         public void NotAllAgreeStar()
         {
-
+            mut.WaitOne();
+            _gameState = GameState.Syncing;
+            mut.ReleaseMutex();
         }
-
         public void StartWait()
         {
-            PreviuosGameState = _gameState;
+            mut.WaitOne();
+            _previousGameState = _gameState;
             _gameState = GameState.Wait;
+            mut.ReleaseMutex();
+            
         }
         public void EndWait()
         {
-            _gameState = PreviuosGameState;
+            mut.WaitOne();
+            if (cards.Count == 0)
+            {
+                _gameState = GameState.NextLevel;
+            }
+            else
+            {
+                _gameState = GameState.Game;
+            }
+            mut.ReleaseMutex();
         }
         public void GazeOpenFace(int faceId, double angleX, double angleY, string target, double timeMiliseconds)
         {
@@ -546,5 +707,8 @@ namespace RoboticPlayer
                 gazeController.SessionStarted = true;
             }
         }
+
+
+        
     }
 }

@@ -30,6 +30,8 @@ namespace RoboticPlayer
                 AutonomousAgent theMindPlayer = new AutonomousAgent(clientName, character, playerID, gazeType);
                 //AutonomousAgent theMindPlayer = new PaceAdapter(clientName, character, playerID, gazeType);
 
+                
+
                 string command = Console.ReadLine();
                 while (command != "exit")
                 {
@@ -39,6 +41,7 @@ namespace RoboticPlayer
 
                         Thread mainLoopThread = new Thread(theMindPlayer.MainLoop);
                         mainLoopThread.Start();
+
                     }
                     command = Console.ReadLine();
                     //Thread.Sleep(30000);

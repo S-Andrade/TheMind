@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
     public AudioClip errorSound;
     private AudioSource audioSource;
 
+    public bool waiting;
+
     public int points;
     public int ngames;
 
@@ -81,6 +83,7 @@ public class GameManager : MonoBehaviour
         //CONDITION = -1;
         points = 0;
         ngames = 0;
+        waiting = false;
     }
 
     // Update is called once per frame
@@ -125,6 +128,13 @@ public class GameManager : MonoBehaviour
             {
                 topOfThePile = updatedTopOfThePile;
                 ValidateMove();
+                if (GameState != GameState.Mistake)
+                {
+                    _thalamusConnector.StartWait();
+                    StartCoroutine(Wait(1));
+                }
+                
+                
             }
             else if (players[0].HowManyCardsLeft() == 0 && players[1].HowManyCardsLeft() == 0 && players[2].HowManyCardsLeft() == 0)
             {
@@ -141,11 +151,16 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    //_thalamusConnector.StartWait();
-                    //_thalamusConnector.EndWait();
-                    LevelUp();
-                    OverlayNextLevelUI.SetActive(true);
-                    GameState = GameState.NextLevel;
+                    if (!waiting)
+                    {
+                        _thalamusConnector.StartWait();
+                        StartCoroutine(Wait(5));
+                        waiting = true;
+                    }
+                    
+                    //LevelUp();
+                    //OverlayNextLevelUI.SetActive(true);
+                    //GameState = GameState.NextLevel;
                 }
             }
 
@@ -242,7 +257,26 @@ public class GameManager : MonoBehaviour
 
     }
 
-
+    private IEnumerator Wait(int time)
+    {
+        yield return new WaitForSeconds(time);
+        waiting = false;
+        if (time == 1)
+        {
+            _thalamusConnector.EndWait();
+        }
+        else
+        {
+            LevelUp();
+            OverlayNextLevelUI.SetActive(true);
+            GameState = GameState.NextLevel;
+            _thalamusConnector.EndWait();
+            UnityEngine.Debug.Log("Estou aqui");
+        }
+        
+    }
+    
+    
 
     void UpdateNumLevelsSetupUI()
     {

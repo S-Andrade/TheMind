@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using TheMindThalamusMessages;
 
 namespace RoboticPlayer
 {
-    class RandomGazeController : ReactiveGazeController
+    class RandomGazeController : GazeController
     {
         private Random random;
         private long nextgazeShift;
@@ -14,6 +16,9 @@ namespace RoboticPlayer
         private string PLAYER_A;
         private string PLAYER_B;
         private string SCREEN;
+        private string TABLET;
+        private string FRONT;
+        private string target;
         private int AVG_DUR_SCREEN;
         private int AVG_DUR_PLAYER;
 
@@ -23,37 +28,65 @@ namespace RoboticPlayer
             PLAYER_A = "player0";
             PLAYER_B = "player1";
             SCREEN = "mainscreen";
+            TABLET = "tablet";
+            FRONT = "front";
             AVG_DUR_SCREEN = 5000;
             AVG_DUR_PLAYER = 2000;
-            targets = new string[] { PLAYER_A, PLAYER_B, SCREEN};
+            targets = new string[] { PLAYER_A, PLAYER_B, SCREEN, TABLET};
+            target = SCREEN;
         }
 
+        
         public override void Update()
         {
             while (true)
             {
                 if (SessionStarted)
-                {
-                    if (currentGazeDuration.ElapsedMilliseconds >= nextgazeShift)
-                    {
-                        string target = targets[random.Next(0, 3)];
-                        Console.WriteLine("------------------------ gaze RANDOMLY at SCREEN");
-                        aa.TMPublisher.GazeBehaviourFinished("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
-                        currentTarget = target;
-                        aa.TMPublisher.GazeAtTarget(currentTarget);
-                        currentGazeDuration.Restart();
-                        aa.TMPublisher.GazeBehaviourStarted("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
-                        NextPractiveBehaviour(currentGazeDuration.ElapsedMilliseconds);
+                {                                    
 
-                        if (target == SCREEN)
+                    if (currentGazeDuration.ElapsedMilliseconds >= 1000)
+                    {  
+                        string target = "";
+                        
+                        if (aa.lookatplayer != -1)
                         {
-                            nextgazeShift = random.Next((int)(AVG_DUR_SCREEN * 0.75), (int)(AVG_DUR_SCREEN * 1.25));
+                            if (aa.lookatplayer == 0)
+                            {
+                                target = PLAYER_A;
+                            }
+                            if (aa.lookatplayer == 1)
+                            {
+                                target = PLAYER_B;
+                            }
+                        }
+                        else if (aa.lookattablet)
+                        {
+                            target = TABLET;
+                            aa.TMPublisher.SetPosture("player2", "satisfaction", 0, 0);
+                        }
+                        else if (aa.lookatfront)
+                        {
+                            target = FRONT;
                         }
                         else
                         {
-                            nextgazeShift = random.Next((int)(AVG_DUR_PLAYER * 0.75), (int)(AVG_DUR_PLAYER * 1.25));
+                            target = SCREEN;
                         }
+                        
+                        if (currentTarget == TABLET)
+                        {
+                            aa.TMPublisher.SetPosture("player2", "neutral", 0, 0);
+                        }
+
+                        aa.TMPublisher.GazeBehaviourFinished("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
+                        currentTarget = target;
+                        Console.WriteLine("------------------------ gaze at " + currentTarget);
+                        aa.TMPublisher.GazeAtTarget(currentTarget);
+                        currentGazeDuration.Restart();
+                        aa.TMPublisher.GazeBehaviourStarted("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
+                        
                     }
+
                 }
             }
         }

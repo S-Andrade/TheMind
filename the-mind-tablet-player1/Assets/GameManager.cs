@@ -43,6 +43,7 @@ public class GameManager : MonoBehaviour
     private bool HasSignalledRefocus;
     private bool IsReady;
     private bool ShouldAckMistake;
+    private bool endlevel;
 
     private String AgreeStar;
 
@@ -64,6 +65,7 @@ public class GameManager : MonoBehaviour
         ShouldAckMistake = false;
         HasSignalledUseStar = false;
         AgreeStar = null;
+        endlevel = false;
         ConfigsScreen.SetActive(true);
         PortInputField.GetComponent<InputField>().text = "7040";
         PlayerIDInputField.GetComponent<InputField>().text = "1";
@@ -82,8 +84,9 @@ public class GameManager : MonoBehaviour
             UpdateReadyButtonUI();
             UpdateStarButtonUI();
             UpdateAnswerStarButtonUI();
-            UnityEngine.Debug.Log(GameState);
+            //UnityEngine.Debug.Log(GameState);
         }
+       
         if (GameState == GameState.GameFinished)
         {
             Application.Quit();
@@ -213,6 +216,7 @@ public class GameManager : MonoBehaviour
 
     public void WaitForNewLevel()
     {
+        endlevel = true;
         IsReady = false;
         ShouldAckMistake = false;
         GameState = GameState.NextLevel;
@@ -381,10 +385,23 @@ public class GameManager : MonoBehaviour
     {
         PreviuosGameState = GameState;
         GameState = GameState.Wait;
+        UnityEngine.Debug.Log("StartWait");
     }
     public void EndWait()
     {
-        GameState = PreviuosGameState;
+        
+        if (cards.Count == 0 && endlevel == true)
+        {
+            GameState = GameState.NextLevel;
+        }
+        else
+        {
+            GameState = GameState.Game;
+        }
+        UnityEngine.Debug.Log("EndWait");
+        UnityEngine.Debug.Log(GameState);
+
+
     }
 
 }
