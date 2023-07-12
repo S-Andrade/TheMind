@@ -18,6 +18,7 @@ namespace RoboticPlayer
         private string SCREEN;
         private string TABLET;
         private string FRONT;
+        private string RANDOM;
         private string target;
         private int AVG_DUR_SCREEN;
         private int AVG_DUR_PLAYER;
@@ -30,6 +31,7 @@ namespace RoboticPlayer
             SCREEN = "mainscreen";
             TABLET = "tablet";
             FRONT = "front";
+            RANDOM = "random";
             AVG_DUR_SCREEN = 5000;
             AVG_DUR_PLAYER = 2000;
             targets = new string[] { PLAYER_A, PLAYER_B, SCREEN, TABLET};
@@ -62,17 +64,21 @@ namespace RoboticPlayer
                         else if (aa.lookattablet)
                         {
                             target = TABLET;
-                            aa.TMPublisher.SetPosture("player2", "satisfaction", 0, 0);
                         }
                         else if (aa.lookatfront)
                         {
                             target = FRONT;
+                        }
+                        else if (aa.lookrandom)
+                        {
+                            target = RANDOM;
                         }
                         else
                         {
                             target = SCREEN;
                         }
                         
+
                         if (currentTarget == TABLET)
                         {
                             aa.TMPublisher.SetPosture("player2", "neutral", 0, 0);
@@ -80,7 +86,7 @@ namespace RoboticPlayer
 
                         aa.TMPublisher.GazeBehaviourFinished("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
                         currentTarget = target;
-                        Console.WriteLine("------------------------ gaze at " + currentTarget);
+                        //Console.WriteLine("------------------------ gaze at " + currentTarget);
                         aa.TMPublisher.GazeAtTarget(currentTarget);
                         currentGazeDuration.Restart();
                         aa.TMPublisher.GazeBehaviourStarted("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);

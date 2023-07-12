@@ -662,11 +662,11 @@ PlayerSettings:
   m_MobileRenderingPath: 1
   metroPackageName: Template2D
   metroPackageVersion: 1.0.0.0
-  metroCertificatePath: 
+  metroCertificatePath: C:\Users\sandr\Desktop\the-mind-main\the-mind-mainscreen\Assets\WSATestCertificate.pfx
   metroCertificatePassword: 
-  metroCertificateSubject: 
-  metroCertificateIssuer: 
-  metroCertificateNotAfter: 0000000000000000
+  metroCertificateSubject: DefaultCompany
+  metroCertificateIssuer: DefaultCompany
+  metroCertificateNotAfter: 80a6ec404dc3da01
   metroApplicationDescription: Template_2D
   wsaImages: {}
   metroTileShortName: 

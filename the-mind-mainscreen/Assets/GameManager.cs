@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     private AudioSource audioSource;
 
     public bool waiting;
+    public int LEVEL;
 
     public int points;
     public int ngames;
@@ -84,6 +85,7 @@ public class GameManager : MonoBehaviour
         points = 0;
         ngames = 0;
         waiting = false;
+        LEVEL = 1;
     }
 
     // Update is called once per frame
@@ -151,11 +153,13 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if (!waiting)
+                    LEVEL++;
+                    if (!waiting && (LEVEL == Level+1))
                     {
+                        waiting = true;
                         _thalamusConnector.StartWait();
                         StartCoroutine(Wait(5));
-                        waiting = true;
+                        UnityEngine.Debug.Log("Caralho");
                     }
                     
                     //LevelUp();
@@ -260,7 +264,6 @@ public class GameManager : MonoBehaviour
     private IEnumerator Wait(int time)
     {
         yield return new WaitForSeconds(time);
-        waiting = false;
         if (time == 1)
         {
             _thalamusConnector.EndWait();
@@ -273,7 +276,7 @@ public class GameManager : MonoBehaviour
             _thalamusConnector.EndWait();
             UnityEngine.Debug.Log("Estou aqui");
         }
-        
+        waiting = false;
     }
     
     
@@ -839,6 +842,7 @@ public class GameManager : MonoBehaviour
             players[i].showCards.Clear();
         }
         pile.StartNewLevel();
+        LEVEL = Level;
         _thalamusConnector.StartLevel(Level, Stars, Lives, hands[0].ToArray(), hands[1].ToArray(), hands[2].ToArray());
         GameState = GameState.Syncing;
     }

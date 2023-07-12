@@ -227,7 +227,6 @@ public class GameManager : MonoBehaviour
         GameState = GameState.GameFinished;
         //Application.Quit();
     }
-
     public void NewLevelHasStarted(int stars, int[] p0Hand, int[] p1Hand, int[] p2Hand)
     {
         UnityEngine.Debug.Log("NewLevel");
@@ -258,7 +257,6 @@ public class GameManager : MonoBehaviour
         }
         GameState = GameState.Syncing;
     }
-
     public void PlayerRequestedRefocus(int playerID)
     {
         if (playerID == -1)
@@ -270,7 +268,6 @@ public class GameManager : MonoBehaviour
             GameState = GameState.Syncing;
         }
     }
-
     public void MistakeOccurred(int playerID, int card, int[] p0WrongCards, int[] p1WrongCards, int[] p2WrongCards)
     {
         GameState = GameState.Mistake;
@@ -303,7 +300,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     public void AllAgreeStar()
     {
         cards.RemoveAt(0);
@@ -319,7 +315,6 @@ public class GameManager : MonoBehaviour
         AgreeStar = null;
         UnityEngine.Debug.Log("NotAll");
     }
-
     public void PlayerRequestedStar(int playerID)
     {
         if (playerID == -1)
@@ -331,20 +326,17 @@ public class GameManager : MonoBehaviour
             GameState = GameState.UseStar;
         }
     }
-   
-   public void PlayButton()
+    public void PlayButton()
     {
         int cardToPlay = cards[0];
         cards.RemoveAt(0);
         _thalamusConnector.PlayCard(ID, cardToPlay);
     }
-
     public void RefocusButton()
     {
         HasSignalledRefocus = true;
         _thalamusConnector.RefocusSignal(ID);
     }
-
     public void ReadyButton()
     {
         IsReady = true;
@@ -357,14 +349,12 @@ public class GameManager : MonoBehaviour
             _thalamusConnector.ContinueAfterMistake(ID);
         }
     }
-
     public void StarButton()
     {
         GameState = GameState.UseStar;
         HasSignalledUseStar = true;
         _thalamusConnector.StarSignal(ID);
     }
-    
     public void NoStarButton()
     {
         AgreeStar = "NO";
@@ -372,7 +362,6 @@ public class GameManager : MonoBehaviour
         GameState = GameState.WaitingAnswer;
         UnityEngine.Debug.Log(AgreeStar);
     }
-
     public void YesStarButton()
     {
         AgreeStar = "YES";
@@ -380,7 +369,6 @@ public class GameManager : MonoBehaviour
         GameState = GameState.WaitingAnswer;
         UnityEngine.Debug.Log(AgreeStar);
     }
-
     public void StartWait()
     {
         PreviuosGameState = GameState;

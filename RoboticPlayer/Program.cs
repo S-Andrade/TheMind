@@ -41,6 +41,8 @@ namespace RoboticPlayer
 
                         Thread mainLoopThread = new Thread(theMindPlayer.MainLoop);
                         mainLoopThread.Start();
+                        theMindPlayer.CalibrationPhaseFinished(0);
+                        theMindPlayer.CalibrationPhaseFinished(1);
 
                     }
                     command = Console.ReadLine();

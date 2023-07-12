@@ -44,6 +44,7 @@ public class GameManager : MonoBehaviour
     private bool IsReady;
     private bool ShouldAckMistake;
     private bool endlevel;
+    private int level;
 
     private String AgreeStar;
 
@@ -66,6 +67,7 @@ public class GameManager : MonoBehaviour
         HasSignalledUseStar = false;
         AgreeStar = null;
         endlevel = false;
+        level = 1;
         ConfigsScreen.SetActive(true);
         PortInputField.GetComponent<InputField>().text = "7030";
         PlayerIDInputField.GetComponent<InputField>().text = "0";
@@ -77,14 +79,12 @@ public class GameManager : MonoBehaviour
         if (GameState != GameState.Connection)
         {
             GameScreen.SetActive(true);
-
             UpdateCardsUI();
             UpdatePlayButtonUI();
             UpdateRefocusButtonUI();
             UpdateReadyButtonUI();
             UpdateStarButtonUI();
             UpdateAnswerStarButtonUI();
-            //UnityEngine.Debug.Log(GameState);
         }
         
         if (GameState == GameState.GameFinished)
@@ -115,7 +115,6 @@ public class GameManager : MonoBehaviour
          
         }
     }
-   
     void UpdateStarButtonUI()
     {
         if (GameState == GameState.Game && cards.Count > 0 && Stars > 0)
@@ -128,7 +127,6 @@ public class GameManager : MonoBehaviour
             StarButtonUI.GetComponent<Button>().interactable = false;
         }
     }
-
     void UpdateReadyButtonUI()
     {
 
@@ -147,7 +145,6 @@ public class GameManager : MonoBehaviour
             ReadyButtonUI.GetComponent<Button>().interactable = false;
         }
     }
-
     void UpdatePlayButtonUI()
     {
 
@@ -160,7 +157,6 @@ public class GameManager : MonoBehaviour
             PlayButtonUI.GetComponent<Button>().interactable = false;
         }
     }
-
     void UpdateRefocusButtonUI()
     {
         if (GameState == GameState.NextLevel || GameState == GameState.Mistake || GameState == GameState.UseStar || GameState == GameState.WaitingAnswer || GameState == GameState.Wait)
@@ -176,7 +172,6 @@ public class GameManager : MonoBehaviour
             RefocusButtonUI.GetComponent<Button>().interactable = true;
         }
     }
-
     void UpdateCardsUI()
     {
         if (GameState == GameState.Syncing || GameState == GameState.Game || GameState == GameState.Mistake || GameState == GameState.Wait)
@@ -195,7 +190,6 @@ public class GameManager : MonoBehaviour
 
         }
     }
-
     public void AllPlayersRefocused()
     {
         GameState = GameState.Game;
@@ -203,7 +197,6 @@ public class GameManager : MonoBehaviour
         IsReady = false;
         ShouldAckMistake = false;
     }
-
     public void ConnectOnClick()
     {
         ConfigsScreen.SetActive(false);
@@ -213,23 +206,22 @@ public class GameManager : MonoBehaviour
         _thalamusConnector = new TabletThalamusConnector(this, IP, port);
         _thalamusConnector.ConnectToGM(ID, "Tablet" + (ID + 1));
     }
-
     public void WaitForNewLevel()
     {
-        endlevel = true;
         IsReady = false;
         ShouldAckMistake = false;
         GameState = GameState.NextLevel;
+        
     }
-
     public void GameFinished()
     {
+        //endlevel = true;
         GameState = GameState.GameFinished;
         //Application.Quit();
     }
-
-    public void NewLevelHasStarted(int stars, int[] p0Hand, int[] p1Hand, int[] p2Hand)
+    public void NewLevelHasStarted(int level, int stars, int[] p0Hand, int[] p1Hand, int[] p2Hand)
     {
+        level = level;
         UnityEngine.Debug.Log("NewLevel");
         endlevel = false;
         Stars = stars;
@@ -259,7 +251,6 @@ public class GameManager : MonoBehaviour
         }
         GameState = GameState.Syncing;
     }
-
     public void PlayerRequestedRefocus(int playerID)
     {
         if (playerID == -1)
@@ -271,7 +262,6 @@ public class GameManager : MonoBehaviour
             GameState = GameState.Syncing;
         }
     }
-
     public void MistakeOccurred(int playerID, int card, int[] p0WrongCards, int[] p1WrongCards, int[] p2WrongCards)
     {
         GameState = GameState.Mistake;
@@ -304,7 +294,6 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
     public void AllAgreeStar()
     {
         cards.RemoveAt(0);
@@ -320,7 +309,6 @@ public class GameManager : MonoBehaviour
         AgreeStar = null;
         UnityEngine.Debug.Log("NotAll");
     }
-
     public void PlayerRequestedStar(int playerID)
     {
         if (playerID == -1)
@@ -332,20 +320,17 @@ public class GameManager : MonoBehaviour
             GameState = GameState.UseStar;
         }
     }
-   
-   public void PlayButton()
+    public void PlayButton()
     {
         int cardToPlay = cards[0];
         cards.RemoveAt(0);
         _thalamusConnector.PlayCard(ID, cardToPlay);
     }
-
     public void RefocusButton()
     {
         HasSignalledRefocus = true;
         _thalamusConnector.RefocusSignal(ID);
     }
-
     public void ReadyButton()
     {
         IsReady = true;
@@ -358,14 +343,12 @@ public class GameManager : MonoBehaviour
             _thalamusConnector.ContinueAfterMistake(ID);
         }
     }
-
     public void StarButton()
     {
         GameState = GameState.UseStar;
         HasSignalledUseStar = true;
         _thalamusConnector.StarSignal(ID);
     }
-    
     public void NoStarButton()
     {
         AgreeStar = "NO";
@@ -373,7 +356,6 @@ public class GameManager : MonoBehaviour
         GameState = GameState.WaitingAnswer;
         UnityEngine.Debug.Log(AgreeStar);
     }
-
     public void YesStarButton()
     {
         AgreeStar = "YES";
@@ -381,16 +363,15 @@ public class GameManager : MonoBehaviour
         GameState = GameState.WaitingAnswer;
         UnityEngine.Debug.Log(AgreeStar);
     }
-
     public void StartWait()
     {
-        PreviuosGameState = GameState;
+        //PreviuosGameState = GameState;
         GameState = GameState.Wait;
         UnityEngine.Debug.Log("startWait");
     }
     public void EndWait()
     {
-        if (cards.Count == 0 && endlevel == true)
+        if (cards.Count == 0)
         {
             GameState = GameState.NextLevel;
         }
@@ -399,7 +380,6 @@ public class GameManager : MonoBehaviour
             GameState = GameState.Game;
         }
         UnityEngine.Debug.Log("EndWait");
-        UnityEngine.Debug.Log(GameState);
     }
 
 }

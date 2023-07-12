@@ -302,7 +302,7 @@ public class TabletThalamusConnector : ThalamusConnector, IUnityPublisher
 
         public void StartLevel(int level, int stars, int teamLives, int[] p0Hand, int[] p1Hand, int[] p2Hand)
         {
-            _thalamusConnector._gameManager.NewLevelHasStarted(stars,p0Hand, p1Hand, p2Hand);
+            _thalamusConnector._gameManager.NewLevelHasStarted(level,stars,p0Hand, p1Hand, p2Hand);
         }
 
         public void AllAgreeStar()
