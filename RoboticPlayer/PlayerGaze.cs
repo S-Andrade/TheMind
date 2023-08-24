@@ -32,6 +32,7 @@ namespace RoboticPlayer
 
         public PlayerGaze(int id, IAutonomousAgentPublisher pub)
         {
+            Console.WriteLine("Eu sou o player "+id);
             publisher = pub;
             ID = id;
             PlayerGazeAtRobot = "player2";
@@ -44,18 +45,18 @@ namespace RoboticPlayer
             {
                 OtherPlayerName = "player0";
             }
-            CurrentGazeBehaviour = null;
+            CurrentGazeBehaviour = new GazeBehavior();
             SessionStarted = false;
             buffer = new List<string>();
             gazeBehaviors = new List<GazeBehavior>();
             gazeEvents = new List<GazeEvent>();
-            //GazeEventsDispatcher = new Thread(DispacthGazeEvents);
-            //GazeEventsDispatcher.Start();
+            GazeEventsDispatcher = new Thread(DispacthGazeEvents);
+            GazeEventsDispatcher.Start();
         }
 
         public bool IsGazingAtRobot()
         {
-            return CurrentGazeBehaviour != null && CurrentGazeBehaviour.Target == PlayerGazeAtRobot;
+            return CurrentGazeBehaviour.start && CurrentGazeBehaviour.Target == PlayerGazeAtRobot;
         }
 
 
@@ -80,7 +81,7 @@ namespace RoboticPlayer
                 mut.ReleaseMutex();
             }
             lastEventTime = timeMiliseconds;*/
-            if (CurrentGazeBehaviour == null)
+            if (!CurrentGazeBehaviour.start)
             {
                 CurrentGazeBehaviour = new GazeBehavior(ID, target, timeMiliseconds);
                 publisher.GazeBehaviourStarted(Name, target, (int)timeMiliseconds);
@@ -101,6 +102,7 @@ namespace RoboticPlayer
             {
                 CurrentGazeBehaviour.UpdateEndtingTime(timeMiliseconds);
             }
+            //Console.WriteLine(CurrentGazeBehaviour.Target);
         }
 
         public void UpdateRhythms()
@@ -218,8 +220,6 @@ namespace RoboticPlayer
 
             return (nextTarget, expectedPeriod);
         }
-
-
         internal void Dispose()
         {
             Console.WriteLine("------------------------- gazeBehaviors.size - " + gazeBehaviors.Count);

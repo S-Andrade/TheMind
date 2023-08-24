@@ -13,7 +13,12 @@ namespace RoboticPlayer
         public long StartingTime;
         public long EndingTime;
         public long Duration;
-
+        public bool start;
+        
+        public GazeBehavior()
+        {
+            start = false;
+        }
         public GazeBehavior(int id, string target, long startingTime, long endingTime)
         {
             GazerID = id;
@@ -21,6 +26,8 @@ namespace RoboticPlayer
             StartingTime = startingTime;
             EndingTime = endingTime;
             Duration = endingTime - startingTime;
+            start = true;
+            
         }
 
         public GazeBehavior(int id, string target, long startingTime)
@@ -30,6 +37,7 @@ namespace RoboticPlayer
             StartingTime = startingTime;
             EndingTime = 0;
             Duration = 0;
+            start = true;
         }
 
         public void UpdateEndtingTime(long endingTime)

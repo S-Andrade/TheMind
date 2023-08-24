@@ -11,10 +11,36 @@ namespace RoboticPlayer
 {
     class ReactiveGazeController : GazeController 
     {
-      
+        private Random random;
+        private long nextgazeShift;
+        private string[] targets;
+        private string PLAYER_A;
+        private string PLAYER_B;
+        private string SCREEN;
+        private string TABLET;
+        private string FRONT;
+        private string RANDOM;
+        private string target;
+        private int AVG_DUR_SCREEN;
+        private int AVG_DUR_PLAYER;
+        private int lookplayer0;
+        private int lookplayer1;
+
         public ReactiveGazeController(AutonomousAgent thalamusClient) : base(thalamusClient)
         {
-            
+            random = new Random();
+            PLAYER_A = "player0";
+            PLAYER_B = "player1";
+            SCREEN = "mainscreen";
+            TABLET = "tablet";
+            FRONT = "front";
+            RANDOM = "random";
+            AVG_DUR_SCREEN = 5000;
+            AVG_DUR_PLAYER = 2000;
+            targets = new string[] { PLAYER_A, PLAYER_B, SCREEN, TABLET };
+            target = SCREEN;
+            lookplayer0 = 0;
+            lookplayer1 = 0; 
         }
 
         public override void Update()
@@ -23,45 +49,154 @@ namespace RoboticPlayer
             {
                 if (SessionStarted)
                 {
-                    if (currentGazeDuration.ElapsedMilliseconds >= GAZE_MIN_DURATION && Player0.SessionStarted && Player1.SessionStarted)
+                    if (currentGazeDuration.ElapsedMilliseconds >= GAZE_MIN_DURATION & Player0.SessionStarted & Player1.SessionStarted)
                     {
-                        //private moments
-                        //player0 looks at player1
-                        if (Player0.CurrentGazeBehaviour.Target == "player1" && (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere")) 
-                        { 
-                            
+                        string target = "";
+
+                        //Task-oriented behaviour//
+                        
+                        if (aa.lookatplayer != -1)
+                        {
+                            if (aa.lookatplayer == 0)
+                            {
+                                target = PLAYER_A;
+                                Console.Write("Control>");
+                            }
+                            if (aa.lookatplayer == 1)
+                            {
+                                target = PLAYER_B;
+                                Console.Write("Control>");
+                            }
                         }
+                        else if (aa.lookattablet)
+                        {
+                            target = TABLET;
+                            Console.Write("Control>");
+                        }
+                        else if (aa.lookatfront)
+                        {
+                            target = FRONT;
+                            Console.Write("Control>");
+                        }
+                       
+
+                        //Mutual gaze//
+
                         //player0 looks at robot
-                        if (Player0.IsGazingAtRobot() && (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere")) { }
-
-                        //player1 looks at player0
-                        if (Player1.CurrentGazeBehaviour.Target == "player0" && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere")) { }
+                        //robot looks at player0
+                        else if (Player0.IsGazingAtRobot() && (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere"))
+                        {
+                            target = PLAYER_A;
+                            lookplayer0 += 1;
+                        }
                         //player1 looks at robot
-                        if (Player1.IsGazingAtRobot() && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere")) { }
-
-
-                        //public moments
+                        //robots looks at player1
+                        else if (Player1.IsGazingAtRobot() && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere"))
+                        {
+                            target = PLAYER_B;
+                            lookplayer1 += 1;
+                        }
                         //player0 and player1 look at eachother
-                        if (Player0.CurrentGazeBehaviour.Target == "player1" && Player1.CurrentGazeBehaviour.Target == "player0") { }
+                        //look at the least gazed
+                        else if (Player0.CurrentGazeBehaviour.Target == "player1" && Player1.CurrentGazeBehaviour.Target == "player0")
+                        {
+                            if (lookplayer0 > lookplayer1)
+                            {
+                                target = PLAYER_B;
+                                lookplayer1 += 1;
+                            }
 
+                            if (lookplayer1 > lookplayer0)
+                            {
+                                target = PLAYER_A;
+                                lookplayer0 += 1;
+                            }
+
+                        }
                         //player0 and player1 look at the robot
-                        if (Player0.IsGazingAtRobot() && Player1.IsGazingAtRobot()) { }
+                        //look at the least gazed
+                        else if (Player0.IsGazingAtRobot() && Player1.IsGazingAtRobot())
+                        {
+                            if (lookplayer0 > lookplayer1)
+                            {
+                                target = PLAYER_B;
+                                lookplayer1 += 1;
+                            }
 
-                        //player0 and player1 look at the mainscreen
-                        if (Player0.CurrentGazeBehaviour.Target == "mainscreen" && Player1.CurrentGazeBehaviour.Target == "mainscreen") { }
+                            if (lookplayer1 > lookplayer0)
+                            {
+                                target = PLAYER_A;
+                                lookplayer0 += 1;
+                            }
+                        }
 
 
-                        //tricky moments
+                        //Joint Attention//
+
+                        //player0 looks at player1
+                        //robot looks at player1
+                        else if (Player0.CurrentGazeBehaviour.Target == "player1" & (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere")) 
+                        {
+                            target = PLAYER_B;
+                            lookplayer1 += 1;
+                        }
+                        //player1 looks at player0
+                        //robot looks at player0
+                        else if (Player1.CurrentGazeBehaviour.Target == "player0" && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere")) 
+                        {
+                            target = PLAYER_A;
+                            lookplayer0 += 1;
+                        }
                         //player0 looks at the robot and player1 looks at player0
-                        if (Player0.IsGazingAtRobot() && Player1.CurrentGazeBehaviour.Target == "player0") { }
+                        //robot looks at player0
+                        else if (Player0.IsGazingAtRobot() && Player1.CurrentGazeBehaviour.Target == "player0")
+                        {
+                            target = PLAYER_A;
+                            lookplayer0 += 1;
+                        }
                         //player1 looks at the robot and player0 looks at player1
-                        if (Player1.IsGazingAtRobot() && Player0.CurrentGazeBehaviour.Target == "player1") { }
+                        //robot looks at player1
+                        else if (Player1.IsGazingAtRobot() && Player0.CurrentGazeBehaviour.Target == "player1")
+                        {
+                            target = PLAYER_B;
+                            lookplayer1 += 1;
+                        }
+                        //player0 and player1 look at the mainscreen
+                        //robot look at mainscreen
+                        else if (Player0.CurrentGazeBehaviour.Target == "mainscreen" && Player1.CurrentGazeBehaviour.Target == "mainscreen") 
+                        {
+                            target = SCREEN;
+                        }
+                        else if (aa.lookrandom)
+                        {
+                            target = RANDOM;
+                        }
+                        else
+                        {
+                            target = SCREEN;
+                        }
 
 
+                        //if (currentTarget == TABLET)
+                        //{
+                          //  aa.TMPublisher.("player2", "neutral", 0, 0);
+                        //}
+                        
 
+
+                        aa.TMPublisher.GazeBehaviourFinished("player2", currentTarget, (int)aa.SessionStartStopWatch.ElapsedMilliseconds);
+                        currentTarget = target;
+                        //Console.WriteLine("------------------------ gaze at " + currentTarget);
+                        aa.TMPublisher.GazeAtTarget(currentTarget);
+                        currentGazeDuration.Restart();
+                        aa.TMPublisher.GazeBehaviourStarted("player2", currentTarget, (int)aa.SessionStartStopWatch.ElapsedMilliseconds);
+
+                        Console.WriteLine(currentTarget);
+                        Console.WriteLine(lookplayer0);
+                        Console.WriteLine(lookplayer1);
                     }
 
-
+                    
                     /*//if (currentGazeDuration.ElapsedMilliseconds >= GAZE_MIN_DURATION && Player0.SessionStarted && Player0.CurrentGazeBehaviour != null && Player1.SessionStarted && Player1.CurrentGazeBehaviour != null)
                     if (currentGazeDuration.ElapsedMilliseconds >= GAZE_MIN_DURATION && Player0.SessionStarted && Player1.SessionStarted && Player1.CurrentGazeBehaviour != null)
                     {

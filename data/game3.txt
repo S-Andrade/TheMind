@@ -1,0 +1,166 @@
+##### waiting-for-card #####
+Mutual gaze
+
+Joint Attention
+
+Player0
+Player0 look at Player1: 1.71%
+Player0 look at Player2: 6.71%
+Player0 looked at the Mainscreen: 49.84%
+Player0 looked at the Tablet: 35.74%
+Player0 looked at the Somewhere else: 6.0%
+
+Player1
+Player1 look at Player2: 2.29%
+Player1 looked at the Mainscreen: 54.47%
+Player0 looked at the Tablet: 43.24%
+
+Player2
+Player2 look at Player1: 1.53%
+Player2 looked at the Mainscreen: 48.5%
+Player0 looked at the Tablet: 49.69%
+Player0 looked at the Somewhere else: 0.28%
+
+
+##### play-card-player0 #####
+Mutual gaze
+
+Joint Attention
+
+Player0
+Player0 looked at the Mainscreen: 78.76%
+Player0 looked at the Tablet: 21.24%
+
+Player1
+Player1 looked at the Mainscreen: 57.61%
+Player0 looked at the Tablet: 42.39%
+
+Player2
+Player2 looked at the Mainscreen: 86.53%
+Player0 looked at the Tablet: 13.47%
+
+
+##### play-card-player1 #####
+Mutual gaze
+
+Joint Attention
+
+Player0
+Player0 look at Player1: 17.18%
+Player0 looked at the Mainscreen: 35.86%
+Player0 looked at the Tablet: 21.75%
+Player0 looked at the Somewhere else: 25.21%
+
+Player1
+Player1 looked at the Mainscreen: 52.87%
+Player0 looked at the Tablet: 47.13%
+
+Player2
+Player2 looked at the Mainscreen: 55.03%
+Player0 looked at the Tablet: 44.97%
+
+
+##### play-card-player2 #####
+Mutual gaze
+
+Joint Attention
+
+Player0
+Player0 look at Player2: 20.34%
+Player0 looked at the Mainscreen: 58.79%
+Player0 looked at the Tablet: 20.86%
+
+Player1
+Player1 looked at the Mainscreen: 79.34%
+Player0 looked at the Tablet: 20.66%
+
+Player2
+Player2 looked at the Mainscreen: 72.94%
+Player0 looked at the Tablet: 27.06%
+
+
+##### start-level #####
+Mutual gaze
+
+Joint Attention
+
+Player0
+Player0 looked at the Mainscreen: 32.07%
+Player0 looked at the Tablet: 67.93%
+
+Player1
+Player1 looked at the Mainscreen: 42.72%
+Player0 looked at the Tablet: 57.28%
+
+Player2
+Player2 looked at the Mainscreen: 50.23%
+Player0 looked at the Tablet: 49.77%
+
+
+##### refocus #####
+Mutual gaze
+
+Joint Attention
+Player0 and Player1 looked at Player2: 1.15%
+
+Player0
+Player0 look at Player1: 2.98%
+Player0 look at Player2: 6.2%
+Player0 looked at the Mainscreen: 45.96%
+Player0 looked at the Tablet: 42.57%
+Player0 looked at the Somewhere else: 2.29%
+
+Player1
+Player1 look at Player0: 0.65%
+Player1 look at Player2: 1.65%
+Player1 looked at the Mainscreen: 55.57%
+Player0 looked at the Tablet: 41.58%
+Player0 looked at the Somewhere else: 0.55%
+
+Player2
+Player2 look at Player0: 0.55%
+Player2 look at Player1: 0.7%
+Player2 looked at the Mainscreen: 54.66%
+Player0 looked at the Tablet: 41.05%
+Player0 looked at the Somewhere else: 3.04%
+
+
+##### mistake #####
+Mutual gaze
+
+Joint Attention
+
+Player0
+Player0 look at Player2: 3.95%
+Player0 looked at the Mainscreen: 46.43%
+Player0 looked at the Tablet: 49.62%
+
+Player1
+Player1 look at Player2: 2.16%
+Player1 looked at the Mainscreen: 50.01%
+Player0 looked at the Tablet: 47.83%
+
+Player2
+Player2 look at Player1: 3.41%
+Player2 looked at the Mainscreen: 72.98%
+Player0 looked at the Tablet: 23.62%
+
+
+##### game-over #####
+Mutual gaze
+
+Joint Attention
+
+Player0
+Player0 looked at the Mainscreen: 57.92%
+Player0 looked at the Tablet: 41.7%
+
+Player1
+Player1 looked at the Mainscreen: 42.39%
+Player0 looked at the Tablet: 56.82%
+
+Player2
+Player2 looked at the Mainscreen: 38.22%
+Player0 looked at the Tablet: 61.78%
+
+

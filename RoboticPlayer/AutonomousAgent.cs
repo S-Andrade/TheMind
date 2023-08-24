@@ -269,7 +269,7 @@ namespace RoboticPlayer
                     List<string> texto = new List<string> { "Uma estrela!", "Boa ideia!", "ok!" };
                     Random random = new Random();
                     int randomIndex = random.Next(texto.Count);
-                    TMPublisher.SetPosture("player2", "neural", 0, 0);
+                    //TMPublisher.SetPosture("player2", "neural", 0, 0);
                     TMPublisher.Speak("player2", texto[randomIndex]);
 
                     int randomWait = randomNums.Next(2000, 5000);
@@ -291,7 +291,7 @@ namespace RoboticPlayer
                         //Console.WriteLine("[{0}]", string.Join(", ", cardsLeft));
                         while (true) 
                         { 
-                            Console.WriteLine("[{0}]", string.Join(", ", cardsLeft));
+                            //Console.WriteLine("[{0}]", string.Join(", ", cardsLeft));
                             if (cardsLeft[0] == 0 & cardsLeft[1] == 0)
                             {
                                 lookatfront = true;
@@ -335,7 +335,7 @@ namespace RoboticPlayer
                     List<string> triste = new List<string> { "oh não!", "Perdemos uma vida!"};
                     Random random = new Random();
                     int randomIndex = random.Next(triste.Count);
-                    TMPublisher.SetPosture("player2", "disappointment", 0, 0);
+                    //TMPublisher.SetPosture("player2", "disappointment", 0, 0);
                     TMPublisher.Speak("player2", triste[randomIndex]);
                     
                     int randomWait = randomNums.Next(2000, 5000);
@@ -435,7 +435,7 @@ namespace RoboticPlayer
             playerThread.Start();
             playerThread.Join();
             lookatplayer = -1;
-            TMPublisher.SetPosture("player2", "neutral", 0, 0);
+            //TMPublisher.SetPosture("player2", "neutral", 0, 0);
         }
 
         public void LookAtFront(int time)
@@ -509,7 +509,7 @@ namespace RoboticPlayer
             {
                 lookatfront = true;
                 LookAtFront(3000);
-                TMPublisher.Speak("player2", "Olá! Eu sou o António! E serei o vosso terceiro membro da equipa!");
+                TMPublisher.Speak("player2", "Olá! Eu sou o émis! E serei o vosso terceiro membro da equipa!");
                 lookatfront = true;
                 LookAtFront(10000);
             }
@@ -602,9 +602,9 @@ namespace RoboticPlayer
 
         public void CardPlayed(int playerID, int card)
         {
-            Console.WriteLine(playerID);
+            //Console.WriteLine(playerID);
 
-            TMPublisher.SetPosture("player2", "satisfaction", 0, 0);
+            //TMPublisher.SetPosture("player2", "satisfaction", 0, 0);
 
             if (playerID == 0 || playerID == 1)
             {
@@ -613,6 +613,11 @@ namespace RoboticPlayer
                     if (cards[0] == card + 1)
                     {
                         TMPublisher.Speak("player2", "Agora sou eu!");
+                    }
+                    else
+                    {
+                        lookatplayer = playerID;
+                        LookAtPlayer();
                     }
                 }
                 else

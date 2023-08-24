@@ -41,11 +41,11 @@ namespace RoboticPlayer
         
         public override void Update()
         {
+            Console.WriteLine("cONTROL");
             while (true)
             {
                 if (SessionStarted)
-                {                                    
-
+                {
                     if (currentGazeDuration.ElapsedMilliseconds >= 1000)
                     {  
                         string target = "";
@@ -79,10 +79,10 @@ namespace RoboticPlayer
                         }
                         
 
-                        if (currentTarget == TABLET)
-                        {
-                            aa.TMPublisher.SetPosture("player2", "neutral", 0, 0);
-                        }
+                        //if (currentTarget == TABLET)
+                        //{
+                            //aa.TMPublisher.SetPosture("player2", "neutral", 0, 0);
+                        //}
 
                         aa.TMPublisher.GazeBehaviourFinished("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
                         currentTarget = target;

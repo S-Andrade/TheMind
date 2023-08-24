@@ -24,7 +24,7 @@ namespace RoboticPlayer
         public long PROACTIVE_NEXT_SHIFT;
         public int GAZE_MIN_DURATION = 1000;//miliseconds
         //public bool JOINT_ATTENTION;
-
+        
         public GazeController(AutonomousAgent thalamusClient)
         {
             aa = thalamusClient;
@@ -56,7 +56,7 @@ namespace RoboticPlayer
         {
             while (true)
             {
-                
+               
             }
         }
 
