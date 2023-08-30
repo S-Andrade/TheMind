@@ -24,7 +24,8 @@ namespace RoboticPlayer
         public long PROACTIVE_NEXT_SHIFT;
         public int GAZE_MIN_DURATION = 1000;//miliseconds
         //public bool JOINT_ATTENTION;
-        
+        public int MutualGaze;
+        public int JointAttention;
         public GazeController(AutonomousAgent thalamusClient)
         {
             aa = thalamusClient;
@@ -37,6 +38,8 @@ namespace RoboticPlayer
             currentGazeDuration.Start();
             //gazeLoop = new Thread(Update);
             //gazeLoop.Start();
+            MutualGaze = 0;
+            JointAttention = 0;
         }
 
         public void Dispose()

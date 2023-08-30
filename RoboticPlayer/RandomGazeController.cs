@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -41,7 +42,7 @@ namespace RoboticPlayer
         
         public override void Update()
         {
-            Console.WriteLine("cONTROL");
+            Console.WriteLine("Control");
             while (true)
             {
                 if (SessionStarted)
@@ -90,7 +91,21 @@ namespace RoboticPlayer
                         aa.TMPublisher.GazeAtTarget(currentTarget);
                         currentGazeDuration.Restart();
                         aa.TMPublisher.GazeBehaviourStarted("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
-                        
+
+                        using (StreamWriter writer = new StreamWriter("C:\\Users\\sandr\\Desktop\\the-mind-main\\random.txt"))
+                        {
+                            if ((Player0.IsGazingAtRobot() && currentTarget == "player0") || (Player1.IsGazingAtRobot() && currentTarget == "player1"))
+                            {
+                                MutualGaze++;
+                                writer.WriteLine("MG " + MutualGaze);
+                            }
+                            if (Player0.CurrentGazeBehaviour.Target == Player1.CurrentGazeBehaviour.Target && Player0.CurrentGazeBehaviour.Target == currentTarget && Player1.CurrentGazeBehaviour.Target == currentTarget)
+                            {
+                                JointAttention++;
+                                writer.WriteLine("JA " + JointAttention);
+                            }
+                        }
+
                     }
 
                 }

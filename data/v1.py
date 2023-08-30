@@ -1,6 +1,5 @@
 
 import sys
-import statistics
 
 # read and organize the file
 player0 = []
@@ -40,18 +39,25 @@ mutual01 = []
 mutual02 = []
 mutual12 = []
 
-lookat0 = []
-lookat1 = []
-lookat2 = []
+lookat01 = []
+lookat02 = []
+lookat10 = []
+lookat12 = []
+lookat20 = []
+lookat21 = []
+
 
 t = 0
 m01 = 0
 m02 = 0
 m12 = 0
 
-l0 = 0
-l1 = 0
-l2 = 0
+l01 = 0
+l02 = 0
+l10 = 0
+l12 = 0
+l20 = 0
+l21 = 0
 
 mutual = []
 lookat = []
@@ -67,10 +73,13 @@ while (i < video_size):
             mutual02 = []
             mutual12 = []
 
-            lookat += [[lookat0,lookat1,lookat2]]
-            lookat0 = []
-            lookat1 = []
-            lookat2 = []
+            lookat += [[lookat01, lookat02, lookat10, lookat12, lookat20, lookat21]]
+            lookat01 = []
+            lookat02 = []
+            lookat10 = []
+            lookat12 = []
+            lookat20 = []
+            lookat21 = []
 
         else:
             t += 1
@@ -95,33 +104,54 @@ while (i < video_size):
                     m12+=1            
            
             
-            if player0[i] == 'look-at-player1' or player0[i] == 'look-at-player2':
-                if (player0[i] == 'look-at-player1' and player0[i+1] != 'look-at-player1') or (player0[i] == 'look-at-player2' and player0[i+1] != 'look-at-player2'):
-                    lookat0 += [l0]
-                    l0 = 0
+            if player0[i] == 'look-at-player1':
+                if player0[i+1] != 'look-at-player1':
+                    lookat01 += [l01]
+                    l01 = 0
                 else:
-                    l0 += 1
-            if player1[i] == 'look-at-player0' or player1[i] == 'look-at-player2':
-                if (player1[i] == 'look-at-player0' and player1[i+1] != 'look-at-player0') or (player1[i] == 'look-at-player2' and player1[i+1] != 'look-at-player2'):
-                    lookat1 += [l1]
-                    l1 = 0
+                    l01 += 1
+
+            if player0[i] == 'look-at-player2':
+                if player0[i+1] != 'look-at-player2':
+                    lookat02 += [l02]
+                    l02 = 0
                 else:
-                    l1 += 1
-            if player2[i] == 'look-at-player0' or player2[i] == 'look-at-player1':
-                if (player2[i] == 'look-at-player0' and player2[i+1] != 'look-at-player0') or (player2[i] == 'look-at-player1' and player2[i+1] != 'look-at-player1'):
-                    lookat2 += [l2]
-                    l2 = 0
+                    l02 += 1
+
+            if player1[i] == 'look-at-player0':
+                if player1[i+1] != 'look-at-player0':
+                    lookat10 += [l10]
+                    l10 = 0
                 else:
-                    l2 += 1
+                    l10 += 1
+            
+            if player1[i] == 'look-at-player2':
+                if player1[i+1] != 'look-at-player2':
+                    lookat12 += [l12]
+                    l12 = 0
+                else:
+                    l12 += 1
+           
+            if player2[i] == 'look-at-player0':
+                if player2[i+1] != 'look-at-player0':
+                    lookat20 += [l20]
+                    l20 = 0
+                else:
+                    l20 += 1
+            
+            if player2[i] == 'look-at-player1':
+                if player2[i+1] != 'look-at-player1':
+                    lookat21 += [l21]
+                    l21 = 0
+                else:
+                    l21 += 1
             
     i += 1
 
 
 #print([x/1000 for x in timelist])
-print(timelist)
 print("t - Freqencia: " , sum(timelist)/video_size*100)
 print("t - Media" , sum(timelist)/len(timelist)/1000)
-print("d - Mediana", statistics.median(timelist)/1000)
 print("t - Max" , max(timelist)/1000)
 print("t - Min" , min(timelist)/1000)
 print("\n")
@@ -150,12 +180,15 @@ print("\n")
 
 print("/////////")
 
-looks = [[],[],[]]
+looks = [[],[],[],[],[],[]]
 
-for m in lookat:
-    looks[0] += [len(m[0])]
-    looks[1] += [len(m[1])]
-    looks[2] += [len(m[2])]
+for l in lookat:
+    looks[0] += [len(l[0])]
+    looks[1] += [len(l[1])]
+    looks[2] += [len(l[2])]
+    looks[3] += [len(l[3])]
+    looks[4] += [len(l[4])]
+    looks[5] += [len(l[5])]
 
 for t in looks:
     print("Media" , sum(t)/len(t))
@@ -165,7 +198,7 @@ for t in looks:
 
 looksm = []
 for m in lookat:
-    looksm += [len(m[0]) + len(m[1]) + len(m[2])]
+    looksm += [len(m[0]) + len(m[1]) + len(m[2]) + len(m[3]) + len(m[4]) + len(m[5])]
 
 print("Media total" , sum(looksm)/len(looksm))
 print("Max total" , max(looksm))
@@ -173,6 +206,6 @@ print("Min total" , min(looksm))
 print("\n")
 
 
-print(sum(times[0]))
-print(sum(times[1]))
-print(sum(times[2]))
+
+
+

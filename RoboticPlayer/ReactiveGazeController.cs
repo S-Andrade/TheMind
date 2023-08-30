@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -25,6 +26,7 @@ namespace RoboticPlayer
         private int AVG_DUR_PLAYER;
         private int lookplayer0;
         private int lookplayer1;
+        
 
         public ReactiveGazeController(AutonomousAgent thalamusClient) : base(thalamusClient)
         {
@@ -45,6 +47,7 @@ namespace RoboticPlayer
 
         public override void Update()
         {
+            Console.WriteLine("Reactive");
             while (true)
             {
                 if (SessionStarted)
@@ -79,94 +82,97 @@ namespace RoboticPlayer
                             Console.Write("Control>");
                         }
                        
-
-                        //Mutual gaze//
-
-                        //player0 looks at robot
-                        //robot looks at player0
-                        else if (Player0.IsGazingAtRobot() && (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere"))
+                        else if (aa._gameState == GameState.Game)
                         {
-                            target = PLAYER_A;
-                            lookplayer0 += 1;
-                        }
-                        //player1 looks at robot
-                        //robots looks at player1
-                        else if (Player1.IsGazingAtRobot() && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere"))
-                        {
-                            target = PLAYER_B;
-                            lookplayer1 += 1;
-                        }
-                        //player0 and player1 look at eachother
-                        //look at the least gazed
-                        else if (Player0.CurrentGazeBehaviour.Target == "player1" && Player1.CurrentGazeBehaviour.Target == "player0")
-                        {
-                            if (lookplayer0 > lookplayer1)
-                            {
-                                target = PLAYER_B;
-                                lookplayer1 += 1;
-                            }
+                             //Mutual gaze//
 
-                            if (lookplayer1 > lookplayer0)
+                                //player0 looks at robot
+                                //robot looks at player0
+                            if (Player0.IsGazingAtRobot() && (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere"))
                             {
                                 target = PLAYER_A;
                                 lookplayer0 += 1;
                             }
-
-                        }
-                        //player0 and player1 look at the robot
-                        //look at the least gazed
-                        else if (Player0.IsGazingAtRobot() && Player1.IsGazingAtRobot())
-                        {
-                            if (lookplayer0 > lookplayer1)
+                            //player1 looks at robot
+                            //robots looks at player1
+                            else if (Player1.IsGazingAtRobot() && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere"))
                             {
                                 target = PLAYER_B;
                                 lookplayer1 += 1;
                             }
+                            //player0 and player1 look at eachother
+                            //look at the least gazed
+                            else if (Player0.CurrentGazeBehaviour.Target == "player1" && Player1.CurrentGazeBehaviour.Target == "player0")
+                            {
+                                if (lookplayer0 > lookplayer1)
+                                {
+                                    target = PLAYER_B;
+                                    lookplayer1 += 1;
+                                }
 
-                            if (lookplayer1 > lookplayer0)
+                                if (lookplayer1 > lookplayer0)
+                                {
+                                    target = PLAYER_A;
+                                    lookplayer0 += 1;
+                                }
+
+                            }
+                            //player0 and player1 look at the robot
+                            //look at the least gazed
+                            else if (Player0.IsGazingAtRobot() && Player1.IsGazingAtRobot())
+                            {
+                                if (lookplayer0 > lookplayer1)
+                                {
+                                    target = PLAYER_B;
+                                    lookplayer1 += 1;
+                                }
+
+                                if (lookplayer1 > lookplayer0)
+                                {
+                                    target = PLAYER_A;
+                                    lookplayer0 += 1;
+                                }
+                            }
+
+
+                            //Joint Attention//
+
+                            //player0 looks at player1
+                            //robot looks at player1
+                            else if (Player0.CurrentGazeBehaviour.Target == "player1" & (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere"))
+                            {
+                                target = PLAYER_B;
+                                lookplayer1 += 1;
+                            }
+                            //player1 looks at player0
+                            //robot looks at player0
+                            else if (Player1.CurrentGazeBehaviour.Target == "player0" && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere"))
                             {
                                 target = PLAYER_A;
                                 lookplayer0 += 1;
                             }
+                            //player0 looks at the robot and player1 looks at player0
+                            //robot looks at player0
+                            else if (Player0.IsGazingAtRobot() && Player1.CurrentGazeBehaviour.Target == "player0")
+                            {
+                                target = PLAYER_A;
+                                lookplayer0 += 1;
+                            }
+                            //player1 looks at the robot and player0 looks at player1
+                            //robot looks at player1
+                            else if (Player1.IsGazingAtRobot() && Player0.CurrentGazeBehaviour.Target == "player1")
+                            {
+                                target = PLAYER_B;
+                                lookplayer1 += 1;
+                            }
+                            //player0 and player1 look at the mainscreen
+                            //robot look at mainscreen
+                            else if (Player0.CurrentGazeBehaviour.Target == "mainscreen" && Player1.CurrentGazeBehaviour.Target == "mainscreen")
+                            {
+                                target = SCREEN;
+                            }
                         }
 
-
-                        //Joint Attention//
-
-                        //player0 looks at player1
-                        //robot looks at player1
-                        else if (Player0.CurrentGazeBehaviour.Target == "player1" & (Player1.CurrentGazeBehaviour.Target == "mainscreen" || Player1.CurrentGazeBehaviour.Target == "elsewhere")) 
-                        {
-                            target = PLAYER_B;
-                            lookplayer1 += 1;
-                        }
-                        //player1 looks at player0
-                        //robot looks at player0
-                        else if (Player1.CurrentGazeBehaviour.Target == "player0" && (Player0.CurrentGazeBehaviour.Target == "mainscreen" || Player0.CurrentGazeBehaviour.Target == "elsewhere")) 
-                        {
-                            target = PLAYER_A;
-                            lookplayer0 += 1;
-                        }
-                        //player0 looks at the robot and player1 looks at player0
-                        //robot looks at player0
-                        else if (Player0.IsGazingAtRobot() && Player1.CurrentGazeBehaviour.Target == "player0")
-                        {
-                            target = PLAYER_A;
-                            lookplayer0 += 1;
-                        }
-                        //player1 looks at the robot and player0 looks at player1
-                        //robot looks at player1
-                        else if (Player1.IsGazingAtRobot() && Player0.CurrentGazeBehaviour.Target == "player1")
-                        {
-                            target = PLAYER_B;
-                            lookplayer1 += 1;
-                        }
-                        //player0 and player1 look at the mainscreen
-                        //robot look at mainscreen
-                        else if (Player0.CurrentGazeBehaviour.Target == "mainscreen" && Player1.CurrentGazeBehaviour.Target == "mainscreen") 
-                        {
-                            target = SCREEN;
-                        }
                         else if (aa.lookrandom)
                         {
                             target = RANDOM;
@@ -194,6 +200,21 @@ namespace RoboticPlayer
                         Console.WriteLine(currentTarget);
                         Console.WriteLine(lookplayer0);
                         Console.WriteLine(lookplayer1);
+
+
+                        using (StreamWriter writer = new StreamWriter("C:\\Users\\sandr\\Desktop\\the-mind-main\\reactive.txt"))
+                        {
+                            if ((Player0.IsGazingAtRobot() && currentTarget == "player0") || (Player1.IsGazingAtRobot() && currentTarget == "player1"))
+                            {
+                                MutualGaze++;
+                                writer.WriteLine("MG " + MutualGaze);
+                            }
+                            if (Player0.CurrentGazeBehaviour.Target == Player1.CurrentGazeBehaviour.Target && Player0.CurrentGazeBehaviour.Target == currentTarget && Player1.CurrentGazeBehaviour.Target == currentTarget)
+                            {
+                                JointAttention++;
+                                writer.WriteLine("JA " + JointAttention);
+                            }
+                        }
                     }
 
                     
