@@ -78,11 +78,49 @@ namespace RoboticPlayer
                         }
                         else if (aa.lookatfront)
                         {
-                            target = FRONT;
-                            Console.Write("Control>");
+                            if (dois == 0)
+                            {
+                                Console.WriteLine("zero");
+                                List<string> r = new List<string> { PLAYER_A, PLAYER_B };
+                                target = r[random.Next(r.Count)];
+                                lastlook = target;
+                                dois = 2;
+                            }
+                            else if (dois == 1)
+                            {
+                                Console.WriteLine("um");
+                                if (lastlook == PLAYER_A)
+                                {
+                                    Console.WriteLine("aiaiaiaiai");
+                                    target = PLAYER_B;
+                                    lastlook = target;
+                                }
+                                else if (lastlook == PLAYER_B)
+                                {
+                                    Console.WriteLine("uiuiuiuiuiu");
+                                    target = PLAYER_A;
+                                    lastlook = target;
+                                }
+                                dois = 2;
+                            }
+                            else if (dois < 3)
+                            {
+                                Console.WriteLine("n");
+                                Console.Write(dois);
+                                target = lastlook;
+                                dois++;
+                            }
+                            else if (dois == 3)
+                            {
+                                Console.WriteLine("tres");
+                                target = lastlook;
+                                dois = 1;
+                            }
+                            Console.WriteLine(lastlook);
+                            Console.WriteLine(target);
                         }
-                       
-                        else if (aa._gameState == GameState.Game)
+
+                        else if (aa._gameState == GameState.Game || aa._gameState == GameState.Waiting || aa._gameState == GameState.NextLevel)
                         {
                              //Mutual gaze//
 
@@ -201,20 +239,11 @@ namespace RoboticPlayer
                         Console.WriteLine(lookplayer0);
                         Console.WriteLine(lookplayer1);
 
-
-                        using (StreamWriter writer = new StreamWriter("C:\\Users\\sandr\\Desktop\\the-mind-main\\reactive.txt"))
+                        using (StreamWriter sw = File.AppendText("C:\\Users\\sandr\\Desktop\\the-mind-main\\timestampReactive.txt"))
                         {
-                            if ((Player0.IsGazingAtRobot() && currentTarget == "player0") || (Player1.IsGazingAtRobot() && currentTarget == "player1"))
-                            {
-                                MutualGaze++;
-                                writer.WriteLine("MG " + MutualGaze);
-                            }
-                            if (Player0.CurrentGazeBehaviour.Target == Player1.CurrentGazeBehaviour.Target && Player0.CurrentGazeBehaviour.Target == currentTarget && Player1.CurrentGazeBehaviour.Target == currentTarget)
-                            {
-                                JointAttention++;
-                                writer.WriteLine("JA " + JointAttention);
-                            }
+                            sw.WriteLine(DateTime.Now + " P0 " + Player0.CurrentGazeBehaviour.Target + " P1 " + Player1.CurrentGazeBehaviour.Target + " P2 " + currentTarget);
                         }
+
                     }
 
                     

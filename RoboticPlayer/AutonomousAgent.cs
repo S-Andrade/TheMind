@@ -331,7 +331,7 @@ namespace RoboticPlayer
                 if (_gameState == GameState.Mistake)
                 {
                     lookatfront = true;
-                    LookAtFront(1000);
+                    LookAtFront(3000);
                     List<string> triste = new List<string> { "oh não!", "Perdemos uma vida!"};
                     Random random = new Random();
                     int randomIndex = random.Next(triste.Count);
@@ -375,26 +375,7 @@ namespace RoboticPlayer
                                 //Console.WriteLine("---- No more cards!!!!!");
                             }
                         }
-                        if (nextTimeToPlay >= PlayStopWatch.ElapsedMilliseconds + 10000)
-                        {
-                            if (PlayStopWatch.ElapsedMilliseconds >= rlook && PlayStopWatch.ElapsedMilliseconds <= rlook+1000)
-                            {
-                                rlook += 10000;
-                                Console.WriteLine(rlook);
-                                int r = randomNums.Next(0,2);
-                                if (r == 0)
-                                {
-                                    lookrandom = true;
-                                    LookRandom();
-                                }
-                                if (r == 1)
-                                {
-                                    lookattablet = true;
-                                    LookAtTablet();
-                                }
-                            }
-                        }
-                        else if (PlayStopWatch.IsRunning && PlayStopWatch.ElapsedMilliseconds >= (nextTimeToPlay - 4000) && PlayStopWatch.ElapsedMilliseconds <= nextTimeToPlay)
+                        else if (PlayStopWatch.IsRunning && PlayStopWatch.ElapsedMilliseconds >= (nextTimeToPlay - 3000) && PlayStopWatch.ElapsedMilliseconds <= nextTimeToPlay)
                         {
                             lookattablet = true;
                             LookAtTablet();
@@ -456,7 +437,7 @@ namespace RoboticPlayer
         {
             lookrandomThread = new Thread(() =>
             {
-                Thread.Sleep(3000);
+                Thread.Sleep(5000);
             });
 
             lookrandomThread.Start();

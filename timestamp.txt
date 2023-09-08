@@ -1,0 +1,73 @@
+06/09/2023 17:59:58 P0 player1 P1  P2 
+06/09/2023 17:59:59 P0 player1 P1  P2 
+06/09/2023 18:00:00 P0 mainscreen P1  P2 
+06/09/2023 18:00:01 P0 player1 P1 mainscreen P2 
+06/09/2023 18:00:02 P0 player2 P1 mainscreen P2 player1
+06/09/2023 18:00:03 P0 mainscreen P1 mainscreen P2 player1
+06/09/2023 18:00:04 P0 mainscreen P1 mainscreen P2 mainscreen
+06/09/2023 18:00:05 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:06 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:07 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:08 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:09 P0 mainscreen P1 mainscreen P2 player1
+06/09/2023 18:00:11 P0 mainscreen P1 mainscreen P2 mainscreen
+06/09/2023 18:00:12 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:13 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:14 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:15 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:16 P0 mainscreen P1 mainscreen P2 player1
+06/09/2023 18:00:17 P0 player2 P1 mainscreen P2 mainscreen
+06/09/2023 18:00:18 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:19 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:20 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:21 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:22 P0 mainscreen P1 mainscreen P2 player0
+06/09/2023 18:00:23 P0 mainscreen P1 mainscreen P2 player0
+06/09/2023 18:00:24 P0 mainscreen P1 mainscreen P2 player0
+06/09/2023 18:00:25 P0 mainscreen P1 mainscreen P2 mainscreen
+06/09/2023 18:00:26 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:27 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:28 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:29 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:30 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:31 P0 mainscreen P1 mainscreen P2 player1
+06/09/2023 18:00:32 P0 mainscreen P1 mainscreen P2 mainscreen
+06/09/2023 18:00:33 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:34 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:35 P0 player1 P1 player0 P2 
+06/09/2023 18:00:36 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:37 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:38 P0 player2 P1 mainscreen P2 player0
+06/09/2023 18:00:39 P0 player1 P1 mainscreen P2 mainscreen
+06/09/2023 18:00:40 P0 player1 P1 mainscreen P2 
+06/09/2023 18:00:41 P0 player2 P1 mainscreen P2 
+06/09/2023 18:00:42 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:43 P0 player1 P1 player0 P2 
+06/09/2023 18:00:44 P0 player1 P1 mainscreen P2 player1
+06/09/2023 18:00:45 P0 player1 P1 mainscreen P2 mainscreen
+06/09/2023 18:00:46 P0 player1 P1 mainscreen P2 
+06/09/2023 18:00:47 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:48 P0 player1 P1 mainscreen P2 
+06/09/2023 18:00:49 P0 player1 P1 player2 P2 
+06/09/2023 18:00:50 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:51 P0 player1 P1 mainscreen P2 player0
+06/09/2023 18:00:52 P0 player2 P1 mainscreen P2 mainscreen
+06/09/2023 18:00:53 P0 player1 P1 mainscreen P2 
+06/09/2023 18:00:54 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:00:55 P0 player1 P1 mainscreen P2 
+06/09/2023 18:00:56 P0 player2 P1 mainscreen P2 
+06/09/2023 18:00:57 P0 player2 P1 mainscreen P2 
+06/09/2023 18:00:58 P0 player2 P1 mainscreen P2 player0
+06/09/2023 18:00:59 P0 player2 P1 mainscreen P2 player0
+06/09/2023 18:01:00 P0 player2 P1 mainscreen P2 mainscreen
+06/09/2023 18:01:01 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:01:02 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:01:03 P0 player2 P1 mainscreen P2 
+06/09/2023 18:01:04 P0 player1 P1 mainscreen P2 
+06/09/2023 18:01:05 P0 mainscreen P1 mainscreen P2 player0
+06/09/2023 18:01:06 P0 mainscreen P1 mainscreen P2 mainscreen
+06/09/2023 18:01:07 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:01:08 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:01:09 P0 player2 P1 mainscreen P2 
+06/09/2023 18:01:10 P0 mainscreen P1 mainscreen P2 
+06/09/2023 18:01:11 P0 mainscreen P1 mainscreen P2 player0

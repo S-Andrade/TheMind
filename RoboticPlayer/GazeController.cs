@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -20,12 +21,13 @@ namespace RoboticPlayer
         public long previousGazeShitTime;
         public string currentTarget;
         public bool SessionStarted;
-        public string PROACTIVE_NEXT_TARGET;
-        public long PROACTIVE_NEXT_SHIFT;
+
         public int GAZE_MIN_DURATION = 1000;//miliseconds
         //public bool JOINT_ATTENTION;
         public int MutualGaze;
         public int JointAttention;
+        public int dois;
+        public string lastlook;
         public GazeController(AutonomousAgent thalamusClient)
         {
             aa = thalamusClient;
@@ -40,6 +42,8 @@ namespace RoboticPlayer
             //gazeLoop.Start();
             MutualGaze = 0;
             JointAttention = 0;
+            dois = 0;
+            lastlook = "Player0";
         }
 
         public void Dispose()
@@ -50,11 +54,7 @@ namespace RoboticPlayer
             //gazeLoop.Join();
         }
 
-        public virtual void NextPractiveBehaviour(long timeStamp)
-        {
-            PROACTIVE_NEXT_TARGET = "";
-            PROACTIVE_NEXT_SHIFT = -1;
-        }
+       
         public virtual void Update()
         {
             while (true)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,10 +20,18 @@ namespace RoboticPlayer
         private string SCREEN;
         private string TABLET;
         private string FRONT;
-        private string RANDOM;
+        private string RANDOM1;
+        private string RANDOM2;
+        private string RANDOM3;
+        private string RANDOM4;
+        private string RANDOM5;
         private string target;
         private int AVG_DUR_SCREEN;
         private int AVG_DUR_PLAYER;
+        private Stopwatch RandomStopWatch;
+        private int nextTimeToRandom;
+        private int gazeTime;
+        private string nextTarget;
 
         public RandomGazeController(AutonomousAgent thalamusClient) : base(thalamusClient)
         {
@@ -32,11 +41,19 @@ namespace RoboticPlayer
             SCREEN = "mainscreen";
             TABLET = "tablet";
             FRONT = "front";
-            RANDOM = "random";
+            RANDOM1 = "random1";
+            RANDOM2 = "random2";
+            RANDOM3 = "random3";
+            RANDOM4 = "random4";
+            RANDOM5 = "random5";
             AVG_DUR_SCREEN = 5000;
             AVG_DUR_PLAYER = 2000;
             targets = new string[] { PLAYER_A, PLAYER_B, SCREEN, TABLET};
             target = SCREEN;
+            RandomStopWatch = new Stopwatch();
+            nextTimeToRandom = -1;
+            gazeTime = 2000;
+            nextTarget = RANDOM5;
         }
 
         
@@ -50,7 +67,7 @@ namespace RoboticPlayer
                     if (currentGazeDuration.ElapsedMilliseconds >= 1000)
                     {  
                         string target = "";
-                        
+
                         if (aa.lookatplayer != -1)
                         {
                             if (aa.lookatplayer == 0)
@@ -68,11 +85,69 @@ namespace RoboticPlayer
                         }
                         else if (aa.lookatfront)
                         {
-                            target = FRONT;
+                            if (dois == 0)
+                            {
+                                Console.WriteLine("zero");
+                                List<string> r = new List<string> { PLAYER_A, PLAYER_B };
+                                target = r[random.Next(r.Count)];
+                                lastlook = target;
+                                dois = 2;
+                            }
+                            else if (dois == 1)
+                            {
+                                Console.WriteLine("um");
+                                if (lastlook == PLAYER_A)
+                                {
+                                    Console.WriteLine("aiaiaiaiai");
+                                    target = PLAYER_B;
+                                    lastlook = target;
+                                }
+                                else if(lastlook == PLAYER_B)
+                                {
+                                    Console.WriteLine("uiuiuiuiuiu");
+                                    target = PLAYER_A;
+                                    lastlook = target;
+                                }
+                                dois = 2;
+                            }
+                            else if (dois < 3)
+                            {
+                                Console.WriteLine("n");
+                                Console.Write(dois);
+                                target = lastlook;
+                                dois++;
+                            }
+                            else if (dois == 3)
+                            {
+                                Console.WriteLine("tres");
+                                target = lastlook;
+                                dois = 1;
+                            }
+                            Console.WriteLine(lastlook);
+                            Console.WriteLine(target);
                         }
-                        else if (aa.lookrandom)
+                        else if (aa._gameState == GameState.Game || aa._gameState == GameState.Waiting || aa._gameState == GameState.NextLevel)
                         {
-                            target = RANDOM;
+                            if (nextTimeToRandom == -1)
+                            {
+                                RandomStopWatch.Restart();
+                                nextTimeToRandom = random.Next(3500,5500);
+                                gazeTime = random.Next(2000, 5000);
+                                List<string> r = new List<string> { RANDOM1,RANDOM2,RANDOM3,RANDOM4,RANDOM5};
+                                nextTarget = r[random.Next(r.Count)];
+
+                            }
+                            if (RandomStopWatch.IsRunning && RandomStopWatch.ElapsedMilliseconds >= nextTimeToRandom)
+                            {
+                                target = nextTarget;
+                                
+                            }
+                            if (RandomStopWatch.IsRunning && RandomStopWatch.ElapsedMilliseconds >= gazeTime+nextTimeToRandom)
+                            {
+                                target = SCREEN;
+                                RandomStopWatch.Stop();
+                                nextTimeToRandom = -1;
+                            }
                         }
                         else
                         {
@@ -91,20 +166,13 @@ namespace RoboticPlayer
                         aa.TMPublisher.GazeAtTarget(currentTarget);
                         currentGazeDuration.Restart();
                         aa.TMPublisher.GazeBehaviourStarted("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
+                        
 
-                        using (StreamWriter writer = new StreamWriter("C:\\Users\\sandr\\Desktop\\the-mind-main\\random.txt"))
+                        using (StreamWriter sw = File.AppendText("C:\\Users\\sandr\\Desktop\\the-mind-main\\timestampRandom.txt"))
                         {
-                            if ((Player0.IsGazingAtRobot() && currentTarget == "player0") || (Player1.IsGazingAtRobot() && currentTarget == "player1"))
-                            {
-                                MutualGaze++;
-                                writer.WriteLine("MG " + MutualGaze);
-                            }
-                            if (Player0.CurrentGazeBehaviour.Target == Player1.CurrentGazeBehaviour.Target && Player0.CurrentGazeBehaviour.Target == currentTarget && Player1.CurrentGazeBehaviour.Target == currentTarget)
-                            {
-                                JointAttention++;
-                                writer.WriteLine("JA " + JointAttention);
-                            }
+                            sw.WriteLine(DateTime.Now + " P0 " + Player0.CurrentGazeBehaviour.Target + " P1 " + Player1.CurrentGazeBehaviour.Target + " P2 " + currentTarget);
                         }
+
 
                     }
 
