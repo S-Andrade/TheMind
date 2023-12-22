@@ -190,7 +190,7 @@ namespace RoboticPlayer
 
                         using (StreamWriter sw = File.AppendText("C:\\Users\\sandr\\Desktop\\the-mind-main\\timestampProactive.txt"))
                         {
-                            sw.WriteLine(DateTime.Now + " P0 " + Player0.CurrentGazeBehaviour.Target + " P1 " + Player1.CurrentGazeBehaviour.Target + " P2 " + currentTarget);
+                            sw.WriteLine(DateTime.Now + " P0 " + Player0.CurrentGazeBehaviour.Target + " P1 " + Player1.CurrentGazeBehaviour.Target + " P2 " + currentTarget + " " + aa._gameState);
                         }
                     }
 

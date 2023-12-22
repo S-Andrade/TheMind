@@ -10,7 +10,7 @@ using TheMindThalamusMessages;
 
 namespace RoboticPlayer
 {
-    class RandomGazeController : GazeController
+    class TaskGazeController : GazeController
     {
         private Random random;
         private long nextgazeShift;
@@ -33,7 +33,7 @@ namespace RoboticPlayer
         private int gazeTime;
         private string nextTarget;
 
-        public RandomGazeController(AutonomousAgent thalamusClient) : base(thalamusClient)
+        public TaskGazeController(AutonomousAgent thalamusClient) : base(thalamusClient)
         {
             random = new Random();
             PLAYER_A = "player0";
@@ -68,35 +68,67 @@ namespace RoboticPlayer
                     {  
                         string target = "";
 
-                        if (aa.lookatfront)
+                        if (aa.lookatplayer != -1)
                         {
-                            target = FRONT;
-                        }
-
-                         else if (aa._gameState == GameState.Game || aa._gameState == GameState.Waiting || aa._gameState == GameState.NextLevel)
-                        {
-                            if (nextTimeToRandom == -1)
+                            if (aa.lookatplayer == 0)
                             {
-                                RandomStopWatch.Restart();
-                                nextTimeToRandom = random.Next(3500,5500);
-                                gazeTime = random.Next(2000, 5000);
-                                List<string> r = new List<string> { RANDOM1,RANDOM2,RANDOM3,RANDOM4,RANDOM5};
-                                nextTarget = r[random.Next(r.Count)];
-
+                                target = PLAYER_A;
                             }
-                            if (RandomStopWatch.IsRunning && RandomStopWatch.ElapsedMilliseconds >= nextTimeToRandom)
+                            if (aa.lookatplayer == 1)
                             {
-                                target = nextTarget;
-                                
-                            }
-                            if (RandomStopWatch.IsRunning && RandomStopWatch.ElapsedMilliseconds >= gazeTime+nextTimeToRandom)
-                            {
-                                target = SCREEN;
-                                RandomStopWatch.Stop();
-                                nextTimeToRandom = -1;
+                                target = PLAYER_B;
                             }
                         }
-                       
+                        else if (aa.lookattablet)
+                        {
+                            target = TABLET;
+                        }
+                        else if (aa.lookatfront)
+                        {
+                            if (dois == 0)
+                            {
+                                List<string> r = new List<string> { PLAYER_A, PLAYER_B };
+                                target = r[random.Next(r.Count)];
+                                lastlook = target;
+                                dois = 2;
+                            }
+                            else if (dois == 1)
+                            {
+                                if (lastlook == PLAYER_A)
+                                {
+                                    target = PLAYER_B;
+                                    lastlook = target;
+                                }
+                                else if(lastlook == PLAYER_B)
+                                {
+                                    target = PLAYER_A;
+                                    lastlook = target;
+                                }
+                                dois = 2;
+                            }
+                            else if (dois < 3)
+                            {
+                                Console.Write(dois);
+                                target = lastlook;
+                                dois++;
+                            }
+                            else if (dois == 3)
+                            {
+                                target = lastlook;
+                                dois = 1;
+                            }
+
+                        }
+                        else
+                        {
+                            target = SCREEN;
+                        }
+                        
+
+                        //if (currentTarget == TABLET)
+                        //{
+                            //aa.TMPublisher.SetPosture("player2", "neutral", 0, 0);
+                        //}
 
                         aa.TMPublisher.GazeBehaviourFinished("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
                         currentTarget = target;
@@ -106,7 +138,7 @@ namespace RoboticPlayer
                         aa.TMPublisher.GazeBehaviourStarted("player2", currentTarget, (int) aa.SessionStartStopWatch.ElapsedMilliseconds);
                         
 
-                        using (StreamWriter sw = File.AppendText("C:\\Users\\sandr\\Desktop\\the-mind-main\\timestampRandom.txt"))
+                        using (StreamWriter sw = File.AppendText("C:\\Users\\sandr\\Desktop\\the-mind-main\\timestampTask.txt"))
                         {
                             sw.WriteLine(DateTime.Now + " P0 " + Player0.CurrentGazeBehaviour.Target + " P1 " + Player1.CurrentGazeBehaviour.Target + " P2 " + currentTarget + " " + aa._gameState);
                         }

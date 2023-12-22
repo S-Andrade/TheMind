@@ -91,6 +91,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UnityEngine.Debug.Log(GameState);
         if (_thalamusConnector == null && IPadress != "")
         {
             IPinputField.GetComponent<InputField>().interactable = false;

@@ -76,6 +76,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        UnityEngine.Debug.Log(GameState);
         if (GameState != GameState.Connection)
         {
             GameScreen.SetActive(true);
